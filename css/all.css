@@ -79,10 +79,10 @@ body {
 }
 p {
     font-family: "Open Sans", "Helvetica Neue", "Helvetica", "Hiragino Sans GB", "Microsoft YaHei", "Source Han Sans CN", "WenQuanYi Micro Hei", Arial, sans-serif;
-	color: #666;
+	color: #fff;
 	font-style: normal;
 	font-weight: 400;
-	font-size: 14px;
+	font-size: 20px;
 	line-height: 30px;
 }
 i {
@@ -852,17 +852,15 @@ span.sb-caret { /* Caret Down */
 }
 #hero h2 {
 	color: #ffffff;
-	font-family: 'Georgia', serif, Helvetica, "Helvetica Neue", "Hiragino Sans GB", "Microsoft YaHei", "Source Han Sans CN", "WenQuanYi Micro Hei", Arial, sans-serif;
 	margin-bottom: 20px;
 	display: inline-block;
 	padding: 14px;
 }
 #hero p {
-	color: #ffffff;
+	color: #333;
 	font-family: 'Georgia', serif, Helvetica, "Helvetica Neue", "Hiragino Sans GB", "Microsoft YaHei", "Source Han Sans CN", "WenQuanYi Micro Hei", Arial, sans-serif;
-	margin-bottom: 20px;
+	font-size: 18px;
 	display: inline-block;
-	padding: 14px;
 }
 @media (max-width:1024px) {
 	#hero {
