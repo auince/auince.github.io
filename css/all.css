@@ -851,16 +851,16 @@ span.sb-caret { /* Caret Down */
 	padding-top: 0;
 }
 #hero h2 {
-	color: #151515;
+	color: #ffffff;
 	margin-bottom: 20px;
 	display: inline-block;
 	padding: 14px;
 }
-#hero p {
-	color: #333;
-	font-family: 'Georgia', serif, Helvetica, "Helvetica Neue", "Hiragino Sans GB", "Microsoft YaHei", "Source Han Sans CN", "WenQuanYi Micro Hei", Arial, sans-serif;
-	font-size: 18px;
-	display: inline-block;
+#hero h2 {
+	color: #ffffff; /* 设置字体颜色为白色 */
+	font-family: '楷体', serif, Helvetica, "Helvetica Neue", "Hiragino Sans GB", "Microsoft YaHei", "Source Han Sans CN", "WenQuanYi Micro Hei", Arial, sans-serif; /* 设置字体族为楷体 */
+	font-size: 25px; /* 设置字号大小为36像素 */
+	display: block; /* 设置为块级元素 */
 }
 @media (max-width:1024px) {
 	#hero {
