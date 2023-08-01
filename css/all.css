@@ -850,16 +850,17 @@ span.sb-caret { /* Caret Down */
 	width: 100%;
 	padding-top: 0;
 }
-#hero h2 {
-	color: #151515;
-	margin-bottom: 20px;
+/*#hero h2 {
+	color: #ffffff;
+	font-family: '楷体', serif, Helvetica, "Helvetica Neue", "Hiragino Sans GB", "Microsoft YaHei", "Source Han Sans CN", "WenQuanYi Micro Hei", Arial, sans-serif;
+	margin-bottom: 36px;
 	display: inline-block;
 	padding: 14px;
-}
+}*/
 #hero p {
-	color: #333;
-	font-family: 'Georgia', serif, Helvetica, "Helvetica Neue", "Hiragino Sans GB", "Microsoft YaHei", "Source Han Sans CN", "WenQuanYi Micro Hei", Arial, sans-serif;
-	font-size: 18px;
+	color: #fff;
+	font-family: '楷体', serif, Helvetica, "Helvetica Neue", "Hiragino Sans GB", "Microsoft YaHei", "Source Han Sans CN", "WenQuanYi Micro Hei", Arial, sans-serif;
+	font-size: 36px;
 	display: inline-block;
 }
 @media (max-width:1024px) {
