@@ -724,8 +724,8 @@ html.sb-init.sb-active.sb-active-right #projects .filter-item div a {
 	opacity: 1;
 }
 .sb-slidebar {
-	background-color: #151515; /* Background colour. */
-	color: #666; /* Text colour. */
+	background-color: ##246dc9e8; /* Background colour. */
+	color: #000; /* Text colour. */
 	font-weight: 700;
 	font-size: 14px;
 	cursor: default;
@@ -738,7 +738,7 @@ html.sb-init.sb-active.sb-active-right #projects .filter-item div a {
 	text-decoration: none;
 	font-weight: 700;
 	text-transform: uppercase;
-	font-size: 13px
+	font-size: 29px
 }
 .sb-slidebar a:hover {
 	color: #fff; /* Link hover colour. */
@@ -766,15 +766,15 @@ html.sb-init.sb-active.sb-active-right #projects .filter-item div a {
 	border-bottom: none; /* Removed bottom border from last list item. */
 }
 .sb-menu li a {
-	font-family: 'Open Sans', Helvetica, "Helvetica Neue", "Hiragino Sans GB", "Microsoft YaHei", "Source Han Sans CN", "WenQuanYi Micro Hei", Arial, sans-serif;
+	font-family:"Microsoft YaHei", Helvetica, "Helvetica Neue", "Hiragino Sans GB", "Source Han Sans CN", "WenQuanYi Micro Hei", Arial, sans-serif;
 	width: 100%; /* Makes links full width. */
 	display: inline-block;
 	font-weight: 600;
 	font-style: normal;
-	color: #666;
+	color: #000;
 	cursor: pointer;
-	line-height: 20px;
-	padding: 3px 10px; /* Creates an even padding the same size as your font. */
+	line-height: 47px;
+	padding: 5px 10px; /* Creates an even padding the same size as your font. */
 }
 .sb-menu li a:hover {
 	text-decoration: none !important;
