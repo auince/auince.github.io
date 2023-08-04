@@ -707,7 +707,7 @@ html.sb-init.sb-active.sb-active-right #projects .filter-item div a {
 	cursor: e-resize;
 }
 .sb-close {
-	text-align: right;
+	text-align: left;
 	cursor: pointer;
 }
 .sb-close img{
@@ -729,7 +729,7 @@ html.sb-init.sb-active.sb-active-right #projects .filter-item div a {
 	font-weight: 700;
 	font-size: 14px;
 	cursor: default;
-	right: -3px;
+	right: -54px;
 	overflow-y: auto;
 	overflow-x: hidden;
 }
@@ -772,7 +772,7 @@ html.sb-init.sb-active.sb-active-right #projects .filter-item div a {
 	display: inline-block;
 	font-weight: 600;
 	font-style: normal;
-	color: #000;
+	color: #fff;
 	cursor: pointer;
 	line-height: 47px;
 	padding: 5px 10px; /* Creates an even padding the same size as your font. */
