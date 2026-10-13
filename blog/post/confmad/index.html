@@ -1,0 +1,80 @@
+<!DOCTYPE html><html lang="zh-CN"><head><meta charset="utf-8"><meta name="viewport" content="width=device-width,initial-scale=1,maximum-scale=2"><meta http-equiv="X-UA-Compatible" content="IE=edge,chrome=1"><meta name="theme-color" content="#060606"><style>
+:root{--bg:#060606;--text:#b6b6b6;--text-dim:#4a4a50;--accent:#5f8de0;--border:#1a1a20}
+*{box-sizing:border-box;margin:0;padding:0}
+html{font-size:20px}
+body{background:var(--bg);color:var(--text);font-family:"Helvetica Neue","Microsoft Yahei",-apple-system,sans-serif;-webkit-font-smoothing:antialiased;line-height:1.9}
+canvas#grid{position:fixed;top:0;left:0;width:100%;height:100%;z-index:0;pointer-events:none;opacity:0.5}
+.container{position:relative;z-index:1;max-width:640px;margin:0 auto;padding:8vh 30px 80px}
+.header{margin-bottom:50px}
+.header h1{font-size:1.4rem;font-weight:300;color:#e8e8e8;letter-spacing:1px;margin-bottom:16px;line-height:1.5}
+.header .meta{font-size:0.65rem;color:var(--text-dim);letter-spacing:2px;display:flex;gap:10px;align-items:center}
+.header .meta .dot{width:4px;height:4px;background:#333;border-radius:50%}
+.tags{display:flex;gap:8px;margin-top:14px}
+.tags span{padding:2px 10px;border:1px solid var(--border);border-radius:12px;font-size:0.6rem;color:var(--text-dim);letter-spacing:1px}
+.article{font-size:0.82rem;color:#8a8a92;font-weight:300}
+.article h2{font-size:1.05rem;color:#c0c0c8;font-weight:400;margin:40px 0 16px;letter-spacing:1px}
+.article h3{font-size:0.9rem;color:#a8a8b0;font-weight:400;margin:32px 0 12px}
+.article p{margin-bottom:18px}
+.article b,.article strong{color:#b0b0b8;font-weight:400}
+.article code{color:#d2906e;font-size:0.75rem;background:rgba(255,255,255,0.04);padding:1px 6px;border-radius:3px}
+.article pre{background:rgba(255,255,255,0.03);border:1px solid var(--border);border-radius:6px;padding:14px 18px;overflow-x:auto;font-size:0.72rem;line-height:1.6;margin:16px 0;color:#9a9aa2}
+.article ul,.article ol{margin:12px 0 18px 20px}
+.article li{margin-bottom:8px}
+.article blockquote{border-left:2px solid var(--accent);margin:20px 0;padding:10px 20px;color:#6a6a74;font-style:italic}
+.article blockquote p{margin:0}
+.article hr{border:none;border-top:1px solid var(--border);margin:32px 0}
+.article a{color:var(--accent)}
+.article img{max-width:100%;border-radius:6px}
+.back{margin-top:60px}
+.back a{color:#333;font-size:0.7rem;letter-spacing:2px;text-decoration:none;transition:color .4s}
+.back a:hover{color:#666}
+.list-header{text-align:center;margin-bottom:80px}
+.list-header h1{font-size:2.4rem;font-weight:200;color:#f0f0f0;letter-spacing:4px;margin-bottom:12px}
+.list-header .sub{font-size:0.8rem;color:var(--text-dim);letter-spacing:2px;font-weight:300}
+.posts{list-style:none;display:flex;flex-direction:column;gap:32px}
+.post-item{padding:0 0 32px;border-bottom:1px solid var(--border);transition:border-color .4s}
+.post-item:last-child{border-bottom:none}
+.post-item:hover{border-color:#2a2a34}
+.post-title{font-size:1.1rem;font-weight:400;margin-bottom:6px;letter-spacing:.5px}
+.post-title a{color:#e0e0e0;text-decoration:none;transition:color .3s}
+.post-title a:hover{color:var(--accent)}
+.post-meta{font-size:0.65rem;color:var(--text-dim);letter-spacing:1px;margin-bottom:10px;display:flex;gap:10px;align-items:center}
+.post-desc{font-size:0.8rem;color:#6a6a72;line-height:1.9;font-weight:300}
+.tag{display:inline-block;padding:2px 10px;border:1px solid var(--border);border-radius:12px;font-size:0.6rem;color:var(--text-dim);letter-spacing:1px}
+@media(max-width:768px){.container{padding:5vh 20px 60px}.header h1,.list-header h1{font-size:1.2rem}}
+.thought-list{font-size:0.85rem;color:#8a8a92;line-height:2}
+.thought-list h1,.thought-list h2,.thought-list h3{margin:0 0 20px}
+.thought-list ol{counter-reset:t;list-style:none;padding:0}
+.thought-list ol>li{position:relative;padding:22px 0 22px 48px;border-bottom:1px solid var(--border);counter-increment:t;font-size:0.82rem;line-height:1.8}
+.thought-list ol>li:last-child{border-bottom:none}
+.thought-list ol>li:before{content:counter(t,decimal-leading-zero);position:absolute;left:0;top:22px;font-size:0.65rem;color:var(--text-dim);font-weight:300;letter-spacing:1px}
+.thought-list ol>li strong,.thought-list ol>li b{color:#b8b8c0;font-weight:400}
+.thought-list ol>li a{color:var(--accent);text-decoration:none;font-size:0.75rem}
+.thought-list ol>li a:hover{color:#80b0f0}
+.thought-list ol>li p{margin-bottom:8px}
+.thought-list ol>li ul,.thought-list ol>li ol{margin:6px 0;padding-left:16px}
+.thought-list ol>li ul li,.thought-list ol>li ol li{border:none;padding:2px 0;font-size:0.8rem}
+.thought-list ol>li ul li:before{content:none}
+</style><title>置信度表达增强多智能体辩论 · Auince</title><meta name="description" content="ConfMAD通过显式置信度表达与校准打破多智能体辩论的信息盲区，在评估设置中改善准确率和共识质量，但校准方法选择与少数意见保护仍需权衡。"><link rel="canonical" href="https://auince.github.io/blog/post/confmad/"><link rel="icon" href="/favicon.ico"><link rel="stylesheet" href="/css/blog.css"></head><body><main class="container blog-article"><nav class="site-nav" aria-label="文章导航"><a href="/blog/">← Notes</a><a href="/">Auince /</a></nav><article><header class="header"><p class="eyebrow">多智能体</p><h1>置信度表达增强多智能体辩论</h1><div class="meta"><span>阅读于 <time datetime="2026-08-06">2026-08-06</time></span></div><div class="tags"><span>MAD</span><span>校准</span><span>置信度</span></div><p class="paper-source"><a href="https://arxiv.org/abs/2509.14034" target="_blank" rel="noopener noreferrer">Enhancing Multi-Agent Debate System Performance via Confidence Expression ↗</a></p></header><div class="article"><p>ConfMAD [1] 的核心创新是让智能体显式表达对自己答案的置信度，并通过校准将主观置信度对齐到可比较的概率尺度。2026年8月阅读该论文时，我关注的是这一机制如何为多智能体协作建立可验证的信息传递通道，而非仅仅追求准确率数字的提升。</p>
+<h2>为何需要显式置信度</h2>
+<p>ConfMAD 要求每个智能体在每轮辩论中不仅给出答案和理由，还给出一个0到1之间的置信度分数。这个分数旨在反映模型对当前推理的内在确定性。</p>
+<p>原始的模型置信度往往失真。现代神经网络倾向于过度自信，即使在错误答案上也可能输出接近1的概率 [3]。ConfMAD引入校准步骤：用一个小型标注集合训练校准函数，将原始置信度映射到与经验正确率对齐的校准置信度。论文比较了三种经典校准方法：</p>
+<p><strong>Platt Scaling</strong> 用逻辑回归将原始分数映射到校准概率，参数少、泛化性强。<strong>Temperature Scaling</strong> 用单一温度参数软化Softmax输出，常用于分类模型 [3]。<strong>Histogram Binning</strong> 将置信度区间离散分桶，每桶内用经验频率替代原始分数。</p>
+<h2>置信度如何改变辩论动态</h2>
+<p>论文观察到一个值得探讨的现象：在部分实验配置中，取消校准（即直接使用原始置信度）并不总是导致性能下降，有时甚至略有提升。置信度表达本身已经提供了部分信息增益，校准的边际收益取决于原始置信度的失真程度和任务特性。</p>
+<h2>技术实现的关键选择</h2>
+<p>ConfMAD的实现涉及三个可配置维度：置信度提取方法、校准算法和最终答案选择策略。</p>
+<p>校准算法的选择直接影响置信度的可靠性。Platt Scaling在论文评估的设置中表现最一致。但这并不意味着Platt在所有场景下都是最优解——温度缩放在大规模分类任务中已被证明有效 [3]。关键问题是校准集的代表性：如果校准数据与实际辩论任务分布偏移，任何校准方法都可能引入新的偏差。</p>
+<p>使用置信度选择最终答案，隐含了一个假设：高置信度答案更可能正确。这也带来潜在风险——如果少数智能体掌握了关键信息但因某种原因表达为中等置信度，而多数智能体以高置信度支持错误答案，系统会压制少数正确意见。论文没有专门设计实验来测试这种&quot;少数但正确&quot;的场景，这是一个需要进一步评估的边界条件。</p>
+<h2>对比相关工作的分析视角</h2>
+<p>ConfMAD与近期关于MAD机制的研究 [2] 形成互补关系。后者在理论假设下证明了置信度调制可以将辩论信念过程从鞅转变为下鞅。ConfMAD则提供了工程化的校准方案比较和多任务验证。</p>
+<p>论文的实验范围限于两对模型组合和若干推理数据集，未在开放域对话、多模态推理或需要外部工具调用的任务上验证。泛化性边界尚不清楚——特别是当智能体数量增加、模型能力差异扩大或任务需要多轮深度推理时，置信度表达和校准是否仍然有效，需要更多实证研究。</p>
+<h2>实践启示</h2>
+<p>对于计划部署MAD系统的工程师，ConfMAD提供了几条可操作的设计原则。</p>
+<p>监控共识动态很重要：不仅看最终准确率，还要追踪共识率和共识正确性。如果共识率高但共识错误率也高，说明系统可能在放大某种系统性偏差。在高风险应用中，可以考虑设置置信度阈值下的二次审查，避免高置信度多数完全压制低置信度但可能正确的少数。</p>
+<p>该论文按2026年8月6日阅读笔记整理，相关文献于2026年10月13日补充核对。文中分析基于论文报告的实验结果和已发表相关工作的对比推论，未进行独立复现。</p>
+<h2>参考文献</h2>
+<p>[1] <a href="https://arxiv.org/abs/2509.14034">Enhancing Multi-Agent Debate System Performance via Confidence Expression</a></p>
+<p>[2] <a href="https://arxiv.org/abs/2601.19921">Demystifying Multi-Agent Debate: The Role of Confidence and Diversity</a></p>
+<p>[3] <a href="https://proceedings.mlr.press/v70/guo17a.html">On Calibration of Modern Neural Networks</a></p>
+</div></article><div class="back"><a href="/blog/">← BACK TO NOTES</a></div></main></body></html>

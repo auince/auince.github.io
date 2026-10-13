@@ -1,0 +1,87 @@
+<!DOCTYPE html><html lang="zh-CN"><head><meta charset="utf-8"><meta name="viewport" content="width=device-width,initial-scale=1,maximum-scale=2"><meta http-equiv="X-UA-Compatible" content="IE=edge,chrome=1"><meta name="theme-color" content="#060606"><style>
+:root{--bg:#060606;--text:#b6b6b6;--text-dim:#4a4a50;--accent:#5f8de0;--border:#1a1a20}
+*{box-sizing:border-box;margin:0;padding:0}
+html{font-size:20px}
+body{background:var(--bg);color:var(--text);font-family:"Helvetica Neue","Microsoft Yahei",-apple-system,sans-serif;-webkit-font-smoothing:antialiased;line-height:1.9}
+canvas#grid{position:fixed;top:0;left:0;width:100%;height:100%;z-index:0;pointer-events:none;opacity:0.5}
+.container{position:relative;z-index:1;max-width:640px;margin:0 auto;padding:8vh 30px 80px}
+.header{margin-bottom:50px}
+.header h1{font-size:1.4rem;font-weight:300;color:#e8e8e8;letter-spacing:1px;margin-bottom:16px;line-height:1.5}
+.header .meta{font-size:0.65rem;color:var(--text-dim);letter-spacing:2px;display:flex;gap:10px;align-items:center}
+.header .meta .dot{width:4px;height:4px;background:#333;border-radius:50%}
+.tags{display:flex;gap:8px;margin-top:14px}
+.tags span{padding:2px 10px;border:1px solid var(--border);border-radius:12px;font-size:0.6rem;color:var(--text-dim);letter-spacing:1px}
+.article{font-size:0.82rem;color:#8a8a92;font-weight:300}
+.article h2{font-size:1.05rem;color:#c0c0c8;font-weight:400;margin:40px 0 16px;letter-spacing:1px}
+.article h3{font-size:0.9rem;color:#a8a8b0;font-weight:400;margin:32px 0 12px}
+.article p{margin-bottom:18px}
+.article b,.article strong{color:#b0b0b8;font-weight:400}
+.article code{color:#d2906e;font-size:0.75rem;background:rgba(255,255,255,0.04);padding:1px 6px;border-radius:3px}
+.article pre{background:rgba(255,255,255,0.03);border:1px solid var(--border);border-radius:6px;padding:14px 18px;overflow-x:auto;font-size:0.72rem;line-height:1.6;margin:16px 0;color:#9a9aa2}
+.article ul,.article ol{margin:12px 0 18px 20px}
+.article li{margin-bottom:8px}
+.article blockquote{border-left:2px solid var(--accent);margin:20px 0;padding:10px 20px;color:#6a6a74;font-style:italic}
+.article blockquote p{margin:0}
+.article hr{border:none;border-top:1px solid var(--border);margin:32px 0}
+.article a{color:var(--accent)}
+.article img{max-width:100%;border-radius:6px}
+.back{margin-top:60px}
+.back a{color:#333;font-size:0.7rem;letter-spacing:2px;text-decoration:none;transition:color .4s}
+.back a:hover{color:#666}
+.list-header{text-align:center;margin-bottom:80px}
+.list-header h1{font-size:2.4rem;font-weight:200;color:#f0f0f0;letter-spacing:4px;margin-bottom:12px}
+.list-header .sub{font-size:0.8rem;color:var(--text-dim);letter-spacing:2px;font-weight:300}
+.posts{list-style:none;display:flex;flex-direction:column;gap:32px}
+.post-item{padding:0 0 32px;border-bottom:1px solid var(--border);transition:border-color .4s}
+.post-item:last-child{border-bottom:none}
+.post-item:hover{border-color:#2a2a34}
+.post-title{font-size:1.1rem;font-weight:400;margin-bottom:6px;letter-spacing:.5px}
+.post-title a{color:#e0e0e0;text-decoration:none;transition:color .3s}
+.post-title a:hover{color:var(--accent)}
+.post-meta{font-size:0.65rem;color:var(--text-dim);letter-spacing:1px;margin-bottom:10px;display:flex;gap:10px;align-items:center}
+.post-desc{font-size:0.8rem;color:#6a6a72;line-height:1.9;font-weight:300}
+.tag{display:inline-block;padding:2px 10px;border:1px solid var(--border);border-radius:12px;font-size:0.6rem;color:var(--text-dim);letter-spacing:1px}
+@media(max-width:768px){.container{padding:5vh 20px 60px}.header h1,.list-header h1{font-size:1.2rem}}
+.thought-list{font-size:0.85rem;color:#8a8a92;line-height:2}
+.thought-list h1,.thought-list h2,.thought-list h3{margin:0 0 20px}
+.thought-list ol{counter-reset:t;list-style:none;padding:0}
+.thought-list ol>li{position:relative;padding:22px 0 22px 48px;border-bottom:1px solid var(--border);counter-increment:t;font-size:0.82rem;line-height:1.8}
+.thought-list ol>li:last-child{border-bottom:none}
+.thought-list ol>li:before{content:counter(t,decimal-leading-zero);position:absolute;left:0;top:22px;font-size:0.65rem;color:var(--text-dim);font-weight:300;letter-spacing:1px}
+.thought-list ol>li strong,.thought-list ol>li b{color:#b8b8c0;font-weight:400}
+.thought-list ol>li a{color:var(--accent);text-decoration:none;font-size:0.75rem}
+.thought-list ol>li a:hover{color:#80b0f0}
+.thought-list ol>li p{margin-bottom:8px}
+.thought-list ol>li ul,.thought-list ol>li ol{margin:6px 0;padding-left:16px}
+.thought-list ol>li ul li,.thought-list ol>li ol li{border:none;padding:2px 0;font-size:0.8rem}
+.thought-list ol>li ul li:before{content:none}
+</style><title>评分与理解的解耦：ArtiMuse 如何联合训练美学评估的两个目标 · Auince</title><meta name="description" content="ArtiMuse 通过两阶段训练将美学文本分析与数值评分分离，利用 Token As Score 策略避免词表扩展，在保留多模态大模型理解能力的同时实现细粒度美学评估。"><link rel="canonical" href="https://auince.github.io/blog/post/artimuse/"><link rel="icon" href="/favicon.ico"><link rel="stylesheet" href="/css/blog.css"></head><body><main class="container blog-article"><nav class="site-nav" aria-label="文章导航"><a href="/blog/">← Notes</a><a href="/">Auince /</a></nav><article><header class="header"><p class="eyebrow">视觉质量</p><h1>评分与理解的解耦：ArtiMuse 如何联合训练美学评估的两个目标</h1><div class="meta"><span>阅读于 <time datetime="2026-07-25">2026-07-25</time></span><span>补充于 <time datetime="2026-08-11">2026-08-11</time></span></div><div class="tags"><span>美学评估</span><span>多模态</span><span>评分</span></div><p class="paper-source"><a href="https://arxiv.org/abs/2507.14533" target="_blank" rel="noopener noreferrer">ArtiMuse: Fine-Grained Image Aesthetics Assessment with Joint Scoring and Expert-Level Understanding ↗</a></p></header><div class="article"><p>图像美学评估（Image Aesthetics Assessment, IAA）长期作为回归问题处理：输入图像，输出分数。这种设计简洁高效，但实际应用中暴露出问题——分数无法解释为何一张照片被评为 7 分而非 8 分，用户不知道应该调整构图、光影还是色彩。ArtiMuse[1] 联合训练评分与专家级美学理解，通过两阶段策略和 Token As Score 机制，在保留多模态大模型（MLLM）语言能力的同时，实现了细粒度美学评分。</p>
+<p>核心问题是：如何在单一模型中同时支持结构化美学分析（文本输出）和精确数值评分（0-100 连续分数），而两个目标不会相互干扰？本文从训练数据构造、两阶段训练机制、Token As Score 策略三个层面展开，分析 ArtiMuse 的技术选择及其与相关工作的对比。</p>
+<h2>两阶段训练的任务分工</h2>
+<p>阅读记录中提到，ArtiMuse将8维属性文本分析与MOS评分分成两个独立训练任务，Score阶段目标token而非自然语言[1]。</p>
+<p>第一阶段是文本预训练，使用LoRA训练模型输出8个美学属性的描述。笔记提到，笔记未取得完整8属性训练prompt，仅展示单属性示例（Overall Gestalt），其余属性提示词依赖推测[1]。</p>
+<p>笔记中提到，第一阶段通过LoRA保留模型知识，同时学习结构化美学分析，这可能修正MLLM的正面偏差，为评分提供感知基础[1]。</p>
+<p>第二阶段是评分微调，训练模型输出MOS分数。记录中提到，两阶段本质上都是有监督训练：第一阶段是任务特定预训练,第二阶段是下游评分微调[1]。</p>
+<h2>Token As Score策略</h2>
+<p>ArtiMuse采用Token As Score策略，使用101个现有token表示0-100分，通过概率期望避免量化损失。</p>
+<p>阅读记录中提到，这种方法利用现有token映射0-100分数，推理时对概率分布求期望，避免词表扩展[1]。</p>
+<p>笔记中的延展性反问指出：Token As Score采用期望值作为最终分数，是否会在分布多峰时产生不存在的中间分，削弱极端分数（如0或100）的预测能力？</p>
+<h2>ArtiMuse-10K数据集</h2>
+<p>阅读记录中提到，训练数据标注生成流程分为Type 1/2/3，每张图像配对的美学分析描述由AI生成[1]。</p>
+<p>ArtiMuse-10K数据集覆盖5大类别。每张图像有8个属性的文字描述和一个MOS分数。笔记中提到，论文中Type1/Type2提示词原文带省略号，完整原文未完全获得，存在信息缺口[1]。</p>
+<h2>与相关工作的对比分析</h2>
+<p>将 ArtiMuse 与 DepictQA[2] 和传统感知相似度度量[3] 对比，可以更清晰地理解其定位。</p>
+<p>DepictQA 将图像质量评估重构为三个层次化任务：描述失真类型（Description）、比较两张图像的质量（Comparison）、推理哪张图像质量更高（Reasoning）。其核心是通过语言输出模拟人类的质量判断过程，在 BAPPS（Berkeley-Adobe Perceptual Patch Similarity）基准上达到 80.3% 的准确率，接近人类表现。</p>
+<p>两者在评估对象和输出形式上存在差异。DepictQA 评估的是图像质量（quality），关注的是失真、噪声、模糊等影响图像保真度的因素；ArtiMuse 评估的是美学价值（aesthetics），关注的是构图、色彩、情感表达等主观审美维度。DepictQA 的所有任务都输出自然语言，包括质量描述和推理过程；ArtiMuse 同时输出文本分析和数值评分，两者通过两阶段训练解耦。</p>
+<p>LPIPS（Learned Perceptual Image Patch Similarity）[3] 使用深度特征距离衡量图像之间的感知相似度，在图像生成、超分辨率等任务中广泛用作损失函数。LPIPS 的目标是判断&quot;两张图像在人类感知上是否相似&quot;，而非&quot;一张图像的美学价值有多高&quot;。</p>
+<p>感知相似度关注的是图像之间的像素级和特征级差异，衡量的是&quot;这张生成图像是否足够接近真实图像&quot;。即使两张图像都在美学上平庸，只要它们在视觉上相似，LPIPS 距离就会很小。美学价值关注的是单张图像的内在审美属性，衡量的是&quot;这张图像在构图、色彩、情感表达上的表现&quot;。两张 LPIPS 距离很小的图像可能具有相同的美学评分，但美学评分高的图像之间 LPIPS 距离可能很大（例如一张高对比度黑白照片和一张柔和色调风景照，二者美学价值都高但视觉特征完全不同）。</p>
+<h2>验证方向</h2>
+<p>笔记提出的验证行动包括：检查论文附录获取完整评分token映射表及8属性prompt定义；重读消融实验，确认第一阶段全参数微调与LoRA变体对评分的具体量化影响；若代码可用，复现Stage1+Stage2与仅Stage2的对比，验证文本预训练对评分的实际贡献。</p>
+<p>延展性反问：若完全移除文本预训练阶段，ArtiMuse在8个美学属性上的专家级分析能力是否会崩塌，从而间接损害评分精度？</p>
+<h2>来源说明</h2>
+<p>本文基于 2026 年 7 月 25 日和 8 月 11 日的原始阅读笔记整理，笔记中关于 ArtiMuse 论文的技术细节、训练流程和实验结果来自对论文的直接阅读和会话讨论。相关文献（DepictQA、LPIPS）的对比分析于 2026 年 10 月 13 日补充核对，用于建立技术关联和方法定位。本文未进行独立的模型复现或实验验证，所有性能数据和机制解释均基于论文原文和笔记中的记录。对于笔记中明确标注为&quot;推断性解释&quot;或&quot;信息缺口&quot;的内容，本文保留了不确定性说明。</p>
+<h2>References</h2>
+<p>[1] <a href="https://arxiv.org/abs/2507.14533">ArtiMuse: Fine-Grained Image Aesthetics Assessment with Joint Scoring and Expert-Level Understanding</a></p>
+<p>[2] <a href="https://arxiv.org/abs/2312.08962">Depicting Beyond Scores: Advancing Image Quality Assessment through Multi-modal Language Models</a></p>
+<p>[3] <a href="https://openaccess.thecvf.com/content_cvpr_2018/html/Zhang_The_Unreasonable_Effectiveness_CVPR_2018_paper.html">The Unreasonable Effectiveness of Deep Features as a Perceptual Metric</a></p>
+</div></article><div class="back"><a href="/blog/">← BACK TO NOTES</a></div></main></body></html>

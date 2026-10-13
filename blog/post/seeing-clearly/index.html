@@ -1,0 +1,105 @@
+<!DOCTYPE html><html lang="zh-CN"><head><meta charset="utf-8"><meta name="viewport" content="width=device-width,initial-scale=1,maximum-scale=2"><meta http-equiv="X-UA-Compatible" content="IE=edge,chrome=1"><meta name="theme-color" content="#060606"><style>
+:root{--bg:#060606;--text:#b6b6b6;--text-dim:#4a4a50;--accent:#5f8de0;--border:#1a1a20}
+*{box-sizing:border-box;margin:0;padding:0}
+html{font-size:20px}
+body{background:var(--bg);color:var(--text);font-family:"Helvetica Neue","Microsoft Yahei",-apple-system,sans-serif;-webkit-font-smoothing:antialiased;line-height:1.9}
+canvas#grid{position:fixed;top:0;left:0;width:100%;height:100%;z-index:0;pointer-events:none;opacity:0.5}
+.container{position:relative;z-index:1;max-width:640px;margin:0 auto;padding:8vh 30px 80px}
+.header{margin-bottom:50px}
+.header h1{font-size:1.4rem;font-weight:300;color:#e8e8e8;letter-spacing:1px;margin-bottom:16px;line-height:1.5}
+.header .meta{font-size:0.65rem;color:var(--text-dim);letter-spacing:2px;display:flex;gap:10px;align-items:center}
+.header .meta .dot{width:4px;height:4px;background:#333;border-radius:50%}
+.tags{display:flex;gap:8px;margin-top:14px}
+.tags span{padding:2px 10px;border:1px solid var(--border);border-radius:12px;font-size:0.6rem;color:var(--text-dim);letter-spacing:1px}
+.article{font-size:0.82rem;color:#8a8a92;font-weight:300}
+.article h2{font-size:1.05rem;color:#c0c0c8;font-weight:400;margin:40px 0 16px;letter-spacing:1px}
+.article h3{font-size:0.9rem;color:#a8a8b0;font-weight:400;margin:32px 0 12px}
+.article p{margin-bottom:18px}
+.article b,.article strong{color:#b0b0b8;font-weight:400}
+.article code{color:#d2906e;font-size:0.75rem;background:rgba(255,255,255,0.04);padding:1px 6px;border-radius:3px}
+.article pre{background:rgba(255,255,255,0.03);border:1px solid var(--border);border-radius:6px;padding:14px 18px;overflow-x:auto;font-size:0.72rem;line-height:1.6;margin:16px 0;color:#9a9aa2}
+.article ul,.article ol{margin:12px 0 18px 20px}
+.article li{margin-bottom:8px}
+.article blockquote{border-left:2px solid var(--accent);margin:20px 0;padding:10px 20px;color:#6a6a74;font-style:italic}
+.article blockquote p{margin:0}
+.article hr{border:none;border-top:1px solid var(--border);margin:32px 0}
+.article a{color:var(--accent)}
+.article img{max-width:100%;border-radius:6px}
+.back{margin-top:60px}
+.back a{color:#333;font-size:0.7rem;letter-spacing:2px;text-decoration:none;transition:color .4s}
+.back a:hover{color:#666}
+.list-header{text-align:center;margin-bottom:80px}
+.list-header h1{font-size:2.4rem;font-weight:200;color:#f0f0f0;letter-spacing:4px;margin-bottom:12px}
+.list-header .sub{font-size:0.8rem;color:var(--text-dim);letter-spacing:2px;font-weight:300}
+.posts{list-style:none;display:flex;flex-direction:column;gap:32px}
+.post-item{padding:0 0 32px;border-bottom:1px solid var(--border);transition:border-color .4s}
+.post-item:last-child{border-bottom:none}
+.post-item:hover{border-color:#2a2a34}
+.post-title{font-size:1.1rem;font-weight:400;margin-bottom:6px;letter-spacing:.5px}
+.post-title a{color:#e0e0e0;text-decoration:none;transition:color .3s}
+.post-title a:hover{color:var(--accent)}
+.post-meta{font-size:0.65rem;color:var(--text-dim);letter-spacing:1px;margin-bottom:10px;display:flex;gap:10px;align-items:center}
+.post-desc{font-size:0.8rem;color:#6a6a72;line-height:1.9;font-weight:300}
+.tag{display:inline-block;padding:2px 10px;border:1px solid var(--border);border-radius:12px;font-size:0.6rem;color:var(--text-dim);letter-spacing:1px}
+@media(max-width:768px){.container{padding:5vh 20px 60px}.header h1,.list-header h1{font-size:1.2rem}}
+.thought-list{font-size:0.85rem;color:#8a8a92;line-height:2}
+.thought-list h1,.thought-list h2,.thought-list h3{margin:0 0 20px}
+.thought-list ol{counter-reset:t;list-style:none;padding:0}
+.thought-list ol>li{position:relative;padding:22px 0 22px 48px;border-bottom:1px solid var(--border);counter-increment:t;font-size:0.82rem;line-height:1.8}
+.thought-list ol>li:last-child{border-bottom:none}
+.thought-list ol>li:before{content:counter(t,decimal-leading-zero);position:absolute;left:0;top:22px;font-size:0.65rem;color:var(--text-dim);font-weight:300;letter-spacing:1px}
+.thought-list ol>li strong,.thought-list ol>li b{color:#b8b8c0;font-weight:400}
+.thought-list ol>li a{color:var(--accent);text-decoration:none;font-size:0.75rem}
+.thought-list ol>li a:hover{color:#80b0f0}
+.thought-list ol>li p{margin-bottom:8px}
+.thought-list ol>li ul,.thought-list ol>li ol{margin:6px 0;padding-left:16px}
+.thought-list ol>li ul li,.thought-list ol>li ol li{border:none;padding:2px 0;font-size:0.8rem}
+.thought-list ol>li ul li:before{content:none}
+</style><title>视觉语言模型的稀有物体识别：不微调主干的轻量适配路径 · Auince</title><meta name="description" content="分析 Seeing Clearly, Reasoning Confidently 如何用多模态类嵌入与双路增强提升 VLM 对稀有物体的识别能力,对比监督来源与推理预算的设计权衡"><link rel="canonical" href="https://auince.github.io/blog/post/seeing-clearly/"><link rel="icon" href="/favicon.ico"><link rel="stylesheet" href="/css/blog.css"></head><body><main class="container blog-article"><nav class="site-nav" aria-label="文章导航"><a href="/blog/">← Notes</a><a href="/">Auince /</a></nav><article><header class="header"><p class="eyebrow">视觉质量</p><h1>视觉语言模型的稀有物体识别：不微调主干的轻量适配路径</h1><div class="meta"><span>阅读于 <time datetime="2026-09-20">2026-09-20</time></span></div><div class="tags"><span>VLM</span><span>稀有物体</span><span>轻量适配</span></div><p class="paper-source"><a href="https://arxiv.org/abs/2602.19615" target="_blank" rel="noopener noreferrer">Seeing Clearly, Reasoning Confidently: Plug-and-Play Remedies for Vision Language Model Blindness ↗</a></p></header><div class="article"><p>视觉语言模型 (VLM) 把清晰可见的路障 (bollard) 错认成交通灯,论文观察到模型对稀有物体区域的注意力不足。<em>Seeing Clearly, Reasoning Confidently</em> [1] 在输入端注入物体级的多模态类嵌入,通过视觉 token 精炼与文本提示富集两条路径协同提升稀有类识别率,避开了重新训练整个 VLM 的高昂代价。本文分析该方法在监督来源、注意力引导与推理预算上的技术选择,对比检索增强与视觉编码器替换策略。</p>
+<h2>稀有物体识别的瓶颈：从现象到归因</h2>
+<p>论文可视化 LLaVA-1.5-7B 中间解码层 (第 15/19/23 层) 生成物体 token 时的注意力权重,发现模型对目标物体区域的注意力不足 [1]。诊断指向两个可干预的输入层因素：视觉 token 的表征强度,语言解码器对相关空间区域的注意力引导。</p>
+<p>该方法保持 VLM 主干冻结,仅在输入端引入轻量适配器。动机是稀有类数据稀缺,充分微调容易过拟合;冻结主干复用原始预训练知识,同时降低计算开销 [1]。</p>
+<h2>多模态类嵌入：用文本多样性补偿视觉样本不足</h2>
+<p>为每个物体类别学习一个多模态类嵌入,同时对齐该类的视觉特征与语义变体文本。论文用大语言模型 (ChatGPT/Gemini) 为每个类生成两类文本：词法同义词 (如 stroller → baby carriage, pushchair) 与视觉属性短语 (形状、材质、部件描述) [1]。关键设计是按类别视觉样本频率的反比重采样文本变体：常见类保留少量文本,稀有类获得最多样的语义描述 [1]。用文本空间的丰富性对冲视觉样本的长尾分布。</p>
+<p>视觉分支用冻结的视觉基础模型 (主实验用 DINOv3,消融实验含 SAM) 对目标边界框裁剪图提取特征,文本分支用冻结的 CLIP 文本编码器处理同义变体 [1]。两个 MLP 投影头将特征映射到 LLM 的隐空间维度,先用跨模态对齐损失 (InfoNCE 形式) 让视觉特征与该类全部同义文本对齐,再用分类损失增强判别性 [1]。类嵌入由该类平均视觉投影特征初始化,以指数移动平均 (EMA, κ=0.95) 迭代更新 [1]。</p>
+<p>与 CLIP [2] 的对照：CLIP 在海量图像-文本对上学习通用的视觉-语言匹配表示,支持自然语言引导的零样本迁移 [2]。本文的类嵌入针对已知的闭集类别,用边界框监督和类别特定的文本增强优化物体级识别,不追求开放词表的泛化。论文冻结了 CLIP 文本编码器作为跨模态对齐的起点,但稀有物体识别需要更细粒度的类内变化建模与判别边界。</p>
+<h2>双路增强：视觉 token 精炼与文本提示选择</h2>
+<p>学到的类嵌入通过两条路径作用于 VLM 输入。</p>
+<p><strong>视觉 token 精炼</strong>：在 VLM 第一个解码层插入交叉注意力适配器,以原始视觉 token <span class="katex"><math xmlns="http://www.w3.org/1998/Math/MathML"><semantics><mrow><mi>V</mi></mrow><annotation encoding="application/x-tex">V</annotation></semantics></math></span> 为 query、类嵌入 <span class="katex"><math xmlns="http://www.w3.org/1998/Math/MathML"><semantics><mrow><mi>W</mi></mrow><annotation encoding="application/x-tex">W</annotation></semantics></math></span> 为 key/value,计算 <span class="katex"><math xmlns="http://www.w3.org/1998/Math/MathML"><semantics><mrow><mover accent="true"><mi>V</mi><mo>^</mo></mover><mo>=</mo><mi>V</mi><mo>+</mo><mtext>CrossAttn</mtext><mo stretchy="false">(</mo><mi>V</mi><mo separator="true">,</mo><mi>W</mi><mo stretchy="false">)</mo></mrow><annotation encoding="application/x-tex">\hat{V} = V + \text{CrossAttn}(V, W)</annotation></semantics></math></span> [1]。每个视觉 patch 查询&quot;哪些物体类别的判别特征与我相关&quot;,将类别线索注入视觉表征。适配器包含 8 个注意力头,单层 1024 维,参数量 33.6M,训练时用重建损失 <span class="katex"><math xmlns="http://www.w3.org/1998/Math/MathML"><semantics><mrow><mi mathvariant="normal">∥</mi><mover accent="true"><mi>V</mi><mo>^</mo></mover><mo>−</mo><mi>V</mi><msup><mi mathvariant="normal">∥</mi><mn>2</mn></msup></mrow><annotation encoding="application/x-tex">\|\hat{V} - V\|^2</annotation></semantics></math></span> 防止分布漂移,用冻结 LM 的自回归语言建模损失保持与下游任务的对齐 [1]。</p>
+<p><strong>文本提示富集</strong>：将类嵌入用作物体检测器,计算每个类别与图像视觉特征的余弦相似度,取 patch 级最大值作为该类的置信度,选择 top-k 类 (两数据集均用 k=3) 拼接到文本提示：<code>&quot;... [Detected: {top-k classes}]&quot;</code> [1]。为语言解码器提供物体存在的先验提示。</p>
+<p>消融实验显示两路增强的互补性 (LLaVA-1.5-7B 在 CODA-LM 数据集上)：仅视觉精炼提升 23.7 分,仅 top-k 文本提示提升 9.3 分,组合后提升 26.3 分 [1]。如果将全部类别标签无选择地放入提示,虽有 3.8 分提升,但会在某些类别引入噪声 (如 Sign 类从 48.8 降至 33.1) [1]。文本提示的价值在于根据图像内容做选择性引导。</p>
+<h2>实验边界：已知类别、边界框监督与推理预算</h2>
+<p>方法在 CODA-LM (自动驾驶场景问答) 和 GeoBench-VLM (卫星影像) 上测试。CODA-LM 上,LLaVA-1.5-7B 的 GPT score 从 46.5 提升至 72.8,稀有类 Barrier 增益 +29.0、Other +28.1 [1]。更强的基座模型 Qwen2.5-VL-7B 提升至 75.4,与任务微调的最佳模型 (77.7) 仅差 2.3 分,在 Barrier (79.8 vs 78.7) 和 Cone (91.7 vs 86.2) 上反超微调模型 [1]。在这些评估设置中，轻量适配器可以回收大部分任务微调的收益。</p>
+<p>方法有三个明确的前提条件：</p>
+<ol>
+<li><strong>闭集类别</strong>：需要预定义类别集合 <span class="katex"><math xmlns="http://www.w3.org/1998/Math/MathML"><semantics><mrow><mi>C</mi></mrow><annotation encoding="application/x-tex">C</annotation></semantics></math></span>,为每个类准备同义词与视觉样本。论文将开放词表扩展列为未来工作 [1]。</li>
+<li><strong>边界框监督</strong>：训练类嵌入需要目标边界框裁剪图,依赖物体检测标注或预训练检测器。</li>
+<li><strong>推理开销</strong>：每次推理需额外运行视觉基础模型前向传播与类别相似度计算 [1]。</li>
+</ol>
+<h2>注意力引导的可解释性与因果边界</h2>
+<p>论文用 logit lens 探测中间隐状态,精炼后的视觉 token 在 &quot;bus&quot; 等物体类上跨层置信度更高、空间更连贯 [1]。注意力权重也更多落在目标区域 [1]。但可视化是相关性证据,不直接证明注意力改变导致识别提升。注意力权重与模型决策的因果关系在 Transformer 文献中仍有争议：高注意力可能反映信息已被编码而非正在编码。精炼后的视觉表征与目标物体的空间对应关系更强,与识别率提升一致。</p>
+<h2>设计空间的权衡</h2>
+<p>对比几种提升 VLM 稀有物体识别的路径：</p>
+<ul>
+<li><strong>检索增强 (如 RAL)</strong>：从外部知识库检索相关样本或描述,需要 VLM 计算密集的微调,且可能丢失原始信息 [1]。</li>
+<li><strong>更强视觉编码器 (如 DeepSeek-VL, MM1)</strong>：替换或增强视觉 backbone,需要充分数据微调,对稀有类仍然数据不足 [1]。</li>
+<li><strong>对齐视觉基础模型 (如用 SAM/DINOv2 特征监督中间层)</strong>：需在微调中监督中间层视觉 token,计算昂贵且有灾难性遗忘风险 [1]。</li>
+<li><strong>本文方案</strong>：冻结 VLM,用边界框监督学习类嵌入,在输入端注入物体级线索,参数少但依赖类别集合与检测标注。</li>
+</ul>
+<p>权衡的核心是监督来源与推理预算。能获得边界框标注,且任务的类别集合相对稳定,本文方法用较少的计算开销逼近全量微调的效果。</p>
+<h2>与 3D 场景理解的对照：物体级特征注入的共性</h2>
+<p>相关工作 Inst3D-LMM [3] 在 3D 场景理解中也面临实例级特征不足的问题,通过 MCMF 模块将多视图 2D 语义特征注入 3D 点云,用 3D-ISR 模块建模空间关系 [3]。共同思路是：当基座模型 (VLM 或 3D-LMM) 的原始表征对细粒度物体/实例分辨力不足时,用轻量模块在输入端或浅层注入物体级/实例级的判别特征,而非直接重训整个模型。区别在于监督信号的几何维度 (2D 边界框 vs 3D 空间关系) 和特征来源 (类嵌入 vs 多视图融合)。</p>
+<p>我的分析：物体级适配器的有效性可能依赖基座模型已经具备一定的空间定位能力,适配器强化判别边界,而非从零学习空间推理。这一假设可以通过消融实验验证：如果基座模型的视觉编码器完全随机初始化,适配器的增益是否会显著下降。</p>
+<h2>待检验的延伸问题</h2>
+<ol>
+<li><strong>开放词表的可行性</strong>：用检索增强动态构建类嵌入 (如查询 CLIP 特征库),能否在推理时处理训练未见类别,代价是多少?</li>
+<li><strong>跨域泛化的上界</strong>：论文在行车与卫星影像两种领域上评估 [1],但两域的&quot;稀有&quot;定义不同,类嵌入是学到了可迁移的物体判别模式,还是只是 CLIP 文本编码器的零样本能力在起作用?</li>
+<li><strong>与实例分割的协同</strong>：当前方法用边界框裁剪图,如果换成像素级 mask (如 SAM 输出),类嵌入的空间精度是否进一步提升,还是会引入更多噪声?</li>
+</ol>
+<h2>来源说明</h2>
+<p>本文基于 2026-09-20 的阅读笔记整理,参考文献于 2026-10-13 补充核对。文中对比与推论属于阅读后的技术分析,未做独立复现实验。</p>
+<h2>References</h2>
+<p>[1] <a href="https://arxiv.org/abs/2602.19615">Seeing Clearly, Reasoning Confidently: Plug-and-Play Remedies for Vision Language Model Blindness</a></p>
+<p>[2] <a href="https://arxiv.org/abs/2103.00020">Learning Transferable Visual Models From Natural Language Supervision</a></p>
+<p>[3] <a href="https://arxiv.org/abs/2503.00513">Inst3D-LMM: Instance-Aware 3D Scene Understanding with Multi-modal Instruction Tuning</a></p>
+</div></article><div class="back"><a href="/blog/">← BACK TO NOTES</a></div></main></body></html>

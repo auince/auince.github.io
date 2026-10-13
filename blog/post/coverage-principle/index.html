@@ -1,0 +1,119 @@
+<!DOCTYPE html><html lang="zh-CN"><head><meta charset="utf-8"><meta name="viewport" content="width=device-width,initial-scale=1,maximum-scale=2"><meta http-equiv="X-UA-Compatible" content="IE=edge,chrome=1"><meta name="theme-color" content="#060606"><style>
+:root{--bg:#060606;--text:#b6b6b6;--text-dim:#4a4a50;--accent:#5f8de0;--border:#1a1a20}
+*{box-sizing:border-box;margin:0;padding:0}
+html{font-size:20px}
+body{background:var(--bg);color:var(--text);font-family:"Helvetica Neue","Microsoft Yahei",-apple-system,sans-serif;-webkit-font-smoothing:antialiased;line-height:1.9}
+canvas#grid{position:fixed;top:0;left:0;width:100%;height:100%;z-index:0;pointer-events:none;opacity:0.5}
+.container{position:relative;z-index:1;max-width:640px;margin:0 auto;padding:8vh 30px 80px}
+.header{margin-bottom:50px}
+.header h1{font-size:1.4rem;font-weight:300;color:#e8e8e8;letter-spacing:1px;margin-bottom:16px;line-height:1.5}
+.header .meta{font-size:0.65rem;color:var(--text-dim);letter-spacing:2px;display:flex;gap:10px;align-items:center}
+.header .meta .dot{width:4px;height:4px;background:#333;border-radius:50%}
+.tags{display:flex;gap:8px;margin-top:14px}
+.tags span{padding:2px 10px;border:1px solid var(--border);border-radius:12px;font-size:0.6rem;color:var(--text-dim);letter-spacing:1px}
+.article{font-size:0.82rem;color:#8a8a92;font-weight:300}
+.article h2{font-size:1.05rem;color:#c0c0c8;font-weight:400;margin:40px 0 16px;letter-spacing:1px}
+.article h3{font-size:0.9rem;color:#a8a8b0;font-weight:400;margin:32px 0 12px}
+.article p{margin-bottom:18px}
+.article b,.article strong{color:#b0b0b8;font-weight:400}
+.article code{color:#d2906e;font-size:0.75rem;background:rgba(255,255,255,0.04);padding:1px 6px;border-radius:3px}
+.article pre{background:rgba(255,255,255,0.03);border:1px solid var(--border);border-radius:6px;padding:14px 18px;overflow-x:auto;font-size:0.72rem;line-height:1.6;margin:16px 0;color:#9a9aa2}
+.article ul,.article ol{margin:12px 0 18px 20px}
+.article li{margin-bottom:8px}
+.article blockquote{border-left:2px solid var(--accent);margin:20px 0;padding:10px 20px;color:#6a6a74;font-style:italic}
+.article blockquote p{margin:0}
+.article hr{border:none;border-top:1px solid var(--border);margin:32px 0}
+.article a{color:var(--accent)}
+.article img{max-width:100%;border-radius:6px}
+.back{margin-top:60px}
+.back a{color:#333;font-size:0.7rem;letter-spacing:2px;text-decoration:none;transition:color .4s}
+.back a:hover{color:#666}
+.list-header{text-align:center;margin-bottom:80px}
+.list-header h1{font-size:2.4rem;font-weight:200;color:#f0f0f0;letter-spacing:4px;margin-bottom:12px}
+.list-header .sub{font-size:0.8rem;color:var(--text-dim);letter-spacing:2px;font-weight:300}
+.posts{list-style:none;display:flex;flex-direction:column;gap:32px}
+.post-item{padding:0 0 32px;border-bottom:1px solid var(--border);transition:border-color .4s}
+.post-item:last-child{border-bottom:none}
+.post-item:hover{border-color:#2a2a34}
+.post-title{font-size:1.1rem;font-weight:400;margin-bottom:6px;letter-spacing:.5px}
+.post-title a{color:#e0e0e0;text-decoration:none;transition:color .3s}
+.post-title a:hover{color:var(--accent)}
+.post-meta{font-size:0.65rem;color:var(--text-dim);letter-spacing:1px;margin-bottom:10px;display:flex;gap:10px;align-items:center}
+.post-desc{font-size:0.8rem;color:#6a6a72;line-height:1.9;font-weight:300}
+.tag{display:inline-block;padding:2px 10px;border:1px solid var(--border);border-radius:12px;font-size:0.6rem;color:var(--text-dim);letter-spacing:1px}
+@media(max-width:768px){.container{padding:5vh 20px 60px}.header h1,.list-header h1{font-size:1.2rem}}
+.thought-list{font-size:0.85rem;color:#8a8a92;line-height:2}
+.thought-list h1,.thought-list h2,.thought-list h3{margin:0 0 20px}
+.thought-list ol{counter-reset:t;list-style:none;padding:0}
+.thought-list ol>li{position:relative;padding:22px 0 22px 48px;border-bottom:1px solid var(--border);counter-increment:t;font-size:0.82rem;line-height:1.8}
+.thought-list ol>li:last-child{border-bottom:none}
+.thought-list ol>li:before{content:counter(t,decimal-leading-zero);position:absolute;left:0;top:22px;font-size:0.65rem;color:var(--text-dim);font-weight:300;letter-spacing:1px}
+.thought-list ol>li strong,.thought-list ol>li b{color:#b8b8c0;font-weight:400}
+.thought-list ol>li a{color:var(--accent);text-decoration:none;font-size:0.75rem}
+.thought-list ol>li a:hover{color:#80b0f0}
+.thought-list ol>li p{margin-bottom:8px}
+.thought-list ol>li ul,.thought-list ol>li ol{margin:6px 0;padding-left:16px}
+.thought-list ol>li ul li,.thought-list ol>li ol li{border:none;padding:2px 0;font-size:0.8rem}
+.thought-list ol>li ul li:before{content:none}
+</style><title>覆盖度原理:预训练如何使后训练成功 · Auince</title><meta name="description" content="为什么交叉熵预测不了下游性能?覆盖度剖面如何精确刻画预训练与强化学习的连接,以及测试时计算能否摆脱序列长度的指数诅咒。"><link rel="canonical" href="https://auince.github.io/blog/post/coverage-principle/"><link rel="icon" href="/favicon.ico"><link rel="stylesheet" href="/css/blog.css"></head><body><main class="container blog-article"><nav class="site-nav" aria-label="文章导航"><a href="/blog/">← Notes</a><a href="/">Auince /</a></nav><article><header class="header"><p class="eyebrow">理论与架构</p><h1>覆盖度原理:预训练如何使后训练成功</h1><div class="meta"><span>阅读于 <time datetime="2026-09-08">2026-09-08</time></span></div><div class="tags"><span>预训练</span><span>覆盖度</span><span>测试时计算</span></div><p class="paper-source"><a href="https://arxiv.org/abs/2510.15020" target="_blank" rel="noopener noreferrer">The Coverage Principle: How Pre-Training Enables Post-Training ↗</a></p></header><div class="article"><p>大语言模型的成功依赖&quot;预训练+后训练&quot;两阶段流程,但两者的理论连接一直模糊。更困扰的是,多项实证研究发现<strong>困惑度更低的模型在下游任务上未必更强</strong>,KL散度甚至与Best-of-N性能负相关[1]。我们用交叉熵指导预训练,却无法用它预测后训练能否成功。</p>
+<p>论文提出的覆盖度原理(coverage principle)给出了精确的替代框架:用密度比的尾部分布——覆盖度剖面(coverage profile)——度量预训练模型对目标分布的支撑能力,并证明这一指标在泛化上快于交叉熵,避免了序列长度的虚假依赖[1]。覆盖度解释了&quot;何时预训练使后训练成功&quot;,也直接指导了三类算法干预:梯度归一化、检查点选择与测试时解码。</p>
+<h2>交叉熵失效的实证困境</h2>
+<p>现有缩放律研究大量投入扩展预训练规模,隐含假设是next-token prediction损失越低,下游表现越好。但图1的实证结果打破了这一假设:在相同预训练数据上,KL散度与Pass@N呈<strong>负相关</strong>,而一个新指标——覆盖度——与下游性能强正相关[1]。</p>
+<p><strong>KL散度只是log密度比的均值,无法刻画尾部行为</strong>。当目标策略π在某些(x,y)上赋予高概率、而基础策略πb赋予极低概率时,密度比π(y|x)/πb(y|x)可能达到很大数值,这些&quot;missing mass&quot;样本主导了交叉熵,但对实际采样几乎不可达。</p>
+<h2>覆盖度剖面:从均值到尾部</h2>
+<p>覆盖度剖面定义为密度比超过阈值N的概率:</p>
+<div class="math-scroll" tabindex="0" aria-label="可横向滚动的公式"><span class="katex"><math xmlns="http://www.w3.org/1998/Math/MathML" display="block"><semantics><mrow><msub><mtext>Cov</mtext><mi>N</mi></msub><mo stretchy="false">(</mo><mi>π</mi><mi mathvariant="normal">∥</mi><msub><mover accent="true"><mi>π</mi><mo>^</mo></mover><mi>b</mi></msub><mo stretchy="false">)</mo><mo>:</mo><mo>=</mo><msub><mi mathvariant="double-struck">P</mi><mrow><mi>x</mi><mo>∼</mo><mi>μ</mi><mo separator="true">,</mo><mi>y</mi><mo>∼</mo><mi>π</mi><mo stretchy="false">(</mo><mo>⋅</mo><mi mathvariant="normal">∣</mi><mi>x</mi><mo stretchy="false">)</mo></mrow></msub><mrow><mo fence="true">[</mo><mfrac><mrow><mi>π</mi><mo stretchy="false">(</mo><mi>y</mi><mi mathvariant="normal">∣</mi><mi>x</mi><mo stretchy="false">)</mo></mrow><mrow><msub><mover accent="true"><mi>π</mi><mo>^</mo></mover><mi>b</mi></msub><mo stretchy="false">(</mo><mi>y</mi><mi mathvariant="normal">∣</mi><mi>x</mi><mo stretchy="false">)</mo></mrow></mfrac><mo>≥</mo><mi>N</mi><mo fence="true">]</mo></mrow><mi mathvariant="normal">.</mi></mrow><annotation encoding="application/x-tex">\text{Cov}_N(\pi \| \hat{\pi}_b) := \mathbb{P}_{x \sim \mu, y \sim \pi(\cdot|x)} \left[ \frac{\pi(y|x)}{\hat{\pi}_b(y|x)} \geq N \right].</annotation></semantics></math></span></div>
+<p>这是log密度比的<strong>上尾概率(survival function)</strong>,不是累积分布函数。大密度比意味着目标分布的质量在基础策略下<strong>被低估</strong>,覆盖较好对应这类&quot;坏尾部&quot;概率在固定N处更小[1]。</p>
+<p>论文在其理论设定下证明,好的覆盖度剖面是Best-of-N采样成功的充要条件[1]。这一刻画比KL更精细,因为它直接对应采样预算的有效性。</p>
+<h2>MLE隐式优化覆盖度的机制</h2>
+<h3>单边结构带来的泛化优势</h3>
+<p>定理4.1证明,在极大似然估计(MLE)下,覆盖度的泛化误差包含两项[1]:</p>
+<ol>
+<li><strong>细粒度项</strong>:随log N衰减,刻画对单个高密度比样本的拟合</li>
+<li><strong>粗粒度项</strong>:刻画missing mass,但<strong>不依赖序列长度H或密度比上界</strong></li>
+</ol>
+<p>相比之下,序列级KL散度随H线性增长(命题3.2),传统泛化界给出&quot;测试时计算需指数增长&quot;的空洞预测[1]。覆盖度界的关键在于利用了log损失的<strong>单边性</strong>:</p>
+<ul>
+<li>未被覆盖的高密度比样本会带来~log N的负向log-likelihood贡献</li>
+<li>MLE的隐式偏置会排除这类&quot;在某些样本上显著差于πD&quot;的模型</li>
+<li>泛化分析只需单边尾界,无需为密度比的全局范围付费</li>
+</ul>
+<p>这一机制不依赖伯努利模型的特殊性,而是next-token prediction损失的普遍性质[1]。</p>
+<h3>过参数化与inherent variance</h3>
+<p>在过参数化设定下,定理4.2引入&quot;inherent variance&quot;σ²作为有效序列长度[1]:</p>
+<div class="math-scroll" tabindex="0" aria-label="可横向滚动的公式"><span class="katex"><math xmlns="http://www.w3.org/1998/Math/MathML" display="block"><semantics><mrow><msubsup><mi>σ</mi><mo>⋆</mo><mn>2</mn></msubsup><mo>:</mo><mo>=</mo><msub><mi mathvariant="double-struck">E</mi><msub><mi>π</mi><mi>D</mi></msub></msub><mrow><mo fence="true">[</mo><munderover><mo>∑</mo><mrow><mi>h</mi><mo>=</mo><mn>1</mn></mrow><mi>H</mi></munderover><msup><mrow><mo fence="true">∥</mo><mi>φ</mi><mo stretchy="false">(</mo><mi>x</mi><mo separator="true">,</mo><msub><mi>y</mi><mrow><mn>1</mn><mo>:</mo><mi>h</mi></mrow></msub><mo stretchy="false">)</mo><mo>−</mo><msub><mover accent="true"><mi>φ</mi><mo>ˉ</mo></mover><msub><mi>π</mi><mi>D</mi></msub></msub><mo stretchy="false">(</mo><mi>x</mi><mo separator="true">,</mo><msub><mi>y</mi><mrow><mn>1</mn><mo>:</mo><mi>h</mi><mo>−</mo><mn>1</mn></mrow></msub><mo stretchy="false">)</mo><mo fence="true">∥</mo></mrow><mn>2</mn></msup><mo fence="true">]</mo></mrow><mi mathvariant="normal">.</mi></mrow><annotation encoding="application/x-tex">\sigma_\star^2 := \mathbb{E}_{\pi_D} \left[ \sum_{h=1}^H \left\| \varphi(x, y_{1:h}) - \bar{\varphi}_{\pi_D}(x, y_{1:h-1}) \right\|^2 \right].</annotation></semantics></math></span></div>
+<p>这捕捉了&quot;只有少数token是高熵/关键的&quot;直觉。</p>
+<p>定理4.1与4.2关注不同方面:前者是一般模型类下的覆盖度泛化界,后者是过参数化线性模型下的inherent variance结果。</p>
+<h2>SGD与梯度归一化</h2>
+<p>命题5.1表明,普通SGD在自回归线性模型上的覆盖度保证存在次优的H依赖,且该依赖是紧致的[1]。定理5.1证明,<strong>梯度归一化</strong>(将每步梯度按范数归一化)可以消除H依赖,实现与序列长度无关的覆盖度保证[1]。</p>
+<p>我的疑问是:该结果依赖线性模型与单遍SGD的简化假设,实际Transformer预训练的多遍、非凸、高度过参数化设定能否继承这一性质,仍需实证验证。论文未声称覆盖度原理能普遍预测每一个强化学习成功案例,也未断言普通Transformer训练满足简化的SGD假设[1]。</p>
+<h2>算法干预:从理论到实践</h2>
+<h3>检查点选择:锦标赛优于交叉熵</h3>
+<p>传统做法用验证集交叉熵选择检查点,但这会选出对missing mass敏感的模型。定理6.3和6.4提出<strong>锦标赛式选择</strong>[1]:</p>
+<p>实证显示,该方法即使在πD不在模型类中(misspecification)时也优于交叉熵验证,并能移除定理4.1中的细粒度项[1]。这与图1的观察一致:覆盖度高的检查点在Pass@N上表现更好。</p>
+<h3>测试时训练:突破proper方法的下界</h3>
+<p>定理6.1证明,测试时训练式解码(test-time training decoding)可以绕过命题3.2对proper方法的KL下界[1]。</p>
+<p>这一结果展示了非proper方法的可证明收益。何时测试时计算的收益超过其开销,取决于任务的奖励密度与验证成本[1]。</p>
+<h2>与近期后训练研究的联系</h2>
+<p>覆盖度原理与近期后训练研究的关系值得厘清。</p>
+<p>Diving into Self-Evolving Training研究了多模态自进化中的训练方法、奖励模型与prompt变化三因子,发现process-based reward model的有效角色是reranker而非verifier[3]。</p>
+<p>Rethinking On-Policy Self-Distillation发现,特权上下文的在线策略蒸馏在长rollout预算下反而损害思考模型,假设机制是fork suppression(分叉抑制)[2]。从覆盖度角度分析,特权信号可能在高熵分叉位置施加了过强的约束,压缩了模型对多样推理路径的覆盖,这与覆盖度原理&quot;探索能力是后训练成功前提&quot;的主张一致。但该机制仍停留在行为关联,缺乏因果隔离实验[2]。</p>
+<p>这两个案例表明,覆盖度原理可以为后训练中的探索-利用权衡提供分析框架。</p>
+<h2>开放问题与局限</h2>
+<h3>理论假设的实际适用性</h3>
+<p>论文的SGD分析依赖自回归线性模型与单遍训练,inherent variance结果也有特定模型假设。实际Transformer预训练涉及多遍、非线性、注意力机制与position encoding,这些因素如何影响覆盖度的泛化速率,尚无理论刻画[1]。</p>
+<h3>覆盖度的计算成本</h3>
+<p>一个可验证的推断是:能否设计coverage-aware的在线估计器,在训练过程中增量维护覆盖度统计,而非事后采样?这类似于Reward-Pass@2指标在自进化训练中的监控作用[3],但需要更精细的理论保证。</p>
+<h3>missing mass的根源</h3>
+<p>覆盖度原理将交叉熵失效归因于missing mass,但<strong>为何某些prompt分布下missing mass特别严重</strong>,论文未深入分析。一个假设是,当训练数据中某些prompt类型稀缺、而该类型对应的响应空间又高度结构化时(如数学推理),模型容易在这些区域产生大密度比样本[1]。</p>
+<p>这与提示分布的异质性有关:如果预训练数据覆盖的prompt类型与下游任务错配,即使总体KL很小,关键子分布上的覆盖度也可能不足。这暗示,数据选择与课程学习可能比单纯扩大规模更有效。</p>
+<h2>实践启示</h2>
+<p><strong>检查点选择</strong>:在计算预算允许时,比较锦标赛式选择与交叉熵验证,尤其是当下游任务需要测试时采样时[1]。</p>
+<p><strong>后训练中的探索保护</strong>:特权蒸馏的负结果提示,特权信号可能压缩探索空间[2]。在设计RL目标时,除了奖励最大化,还应监控采样多样性与覆盖度衰减。</p>
+<h2>来源说明</h2>
+<p>本文基于2026-09-08的阅读笔记整理,引用的相关文献于2026-10-13补充核对。文中关于覆盖度原理的理论结果均来自原论文[1],对比分析参考了近期后训练研究[2][3]。SGD与inherent variance的实际适用性、以及覆盖度估计器的在线化可能,属于基于论文结果的推断,未经独立复现验证。</p>
+<h2>References</h2>
+<p>[1] <a href="https://arxiv.org/abs/2510.15020">The Coverage Principle: How Pre-Training Enables Post-Training</a></p>
+<p>[2] <a href="https://arxiv.org/abs/2607.05184">Rethinking On-Policy Self-Distillation for Thinking Models</a></p>
+<p>[3] <a href="https://proceedings.mlr.press/v267/liu25aj.html">Diving into Self-Evolving Training for Multimodal Reasoning</a></p>
+</div></article><div class="back"><a href="/blog/">← BACK TO NOTES</a></div></main></body></html>

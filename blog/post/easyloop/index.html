@@ -55,7 +55,7 @@ canvas#grid{position:fixed;top:0;left:0;width:100%;height:100%;z-index:0;pointer
 .thought-list ol>li ul,.thought-list ol>li ol{margin:6px 0;padding-left:16px}
 .thought-list ol>li ul li,.thought-list ol>li ol li{border:none;padding:2px 0;font-size:0.8rem}
 .thought-list ol>li ul li:before{content:none}
-</style><title>EasyLoop：面向 Loop Engineering 的 Agent 原生框架设想 · Auince</title><link rel="icon" href="/favicon.ico"></head><body><canvas id="grid"></canvas><div class="container"><div class="header"><h1>EasyLoop：面向 Loop Engineering 的 Agent 原生框架设想</h1><div class="meta"><span>2026-06</span></div><div class="tags"><span>Loop Engineering</span><span>Agent Framework</span><span>EasyLoop</span><span>AI Agent</span></div></div><div class="article"><p>最近看了很多关于 Loop Engineering 的文章，我发现Loop这个概念其实可以被理解得更宽泛。它不应该只局限于 /goal 模式下那种长程、繁重、复杂的大项目，而是可以进一步扩展到更多日常工作和垂直任务场景中。</p>
+</style><title>EasyLoop：面向 Loop Engineering 的 Agent 原生框架设想 · Auince</title><meta name="description" content="EasyLoop：面向 Loop Engineering 的 Agent 原生框架设想"><link rel="canonical" href="https://auince.github.io/blog/post/easyloop/"><link rel="icon" href="/favicon.ico"><link rel="stylesheet" href="/css/blog.css"></head><body><main class="container blog-article"><nav class="site-nav" aria-label="文章导航"><a href="/blog/">← Notes</a><a href="/">Auince /</a></nav><article><header class="header"><p class="eyebrow">随笔</p><h1>EasyLoop：面向 Loop Engineering 的 Agent 原生框架设想</h1><div class="meta"><span>记录于 <time datetime="2026-06">2026-06</time></span></div><div class="tags"><span>Loop Engineering</span><span>Agent Framework</span><span>EasyLoop</span><span>AI Agent</span></div></header><div class="article"><p>最近看了很多关于 Loop Engineering 的文章，我发现Loop这个概念其实可以被理解得更宽泛。它不应该只局限于 /goal 模式下那种长程、繁重、复杂的大项目，而是可以进一步扩展到更多日常工作和垂直任务场景中。</p>
 <p>在当前基于 Agent 的任务流程中，人的 review 往往是主要卡点。</p>
 <p>原因在于，Agent 的交付内容具有较大的不确定性。很多时候，人必须依靠自己的经验和推演能力，在 Agent 生成结果之后进行审查，再根据判断结果让 Agent 继续修改和优化。</p>
 <p>如果进一步抽象，所谓人来 review，本质上是：人根据自己的知识、经验和目标预期，提前判断 Agent 当前交付内容的好坏。</p>
@@ -157,12 +157,4 @@ canvas#grid{position:fixed;top:0;left:0;width:100%;height:100%;z-index:0;pointer
 <p>它希望把不同场景下的 Agent Loop 抽象成统一的工程结构：由 Loop 定义角色和流程，由 Manage 管理状态和上下文，由 Build 根据用户需求自动构建和修正流程。</p>
 <p>从这个角度看，Agent 的未来可能不只是更会回答问题，而是更会围绕目标持续迭代。</p>
 <p>而 EasyLoop 想做的，就是为这种持续迭代提供一个更自然、更可控、更工程化的起点。</p>
-</div><div class="back"><a href="/blog/">← BACK TO NOTES</a></div></div><script>(function(){var c=document.getElementById('grid'),ctx=c.getContext('2d'),w,h,size=40,timer=0;
-function R(){w=c.width=window.innerWidth;h=c.height=window.innerHeight;}
-R();window.addEventListener('resize',R);
-function D(){ctx.clearRect(0,0,w,h);ctx.strokeStyle='rgba(255,255,255,0.04)';ctx.lineWidth=0.5;
-for(var x=0;x<=w;x+=size)for(var y=0;y<=h;y+=size)ctx.strokeRect(x,y,1,1);
-ctx.fillStyle='rgba(255,255,255,0.12)';var C=Math.floor(w/size),R=Math.floor(h/size);
-for(var i=0;i<15;i++){var cx=Math.floor((Math.sin(timer*0.7+i*2.1)*0.5+0.5)*C)*size;
-var cy=Math.floor((Math.cos(timer*0.5+i*1.7)*0.5+0.5)*R)*size;ctx.fillRect(cx,cy,size,size);}
-timer+=0.008;requestAnimationFrame(D);}D();})();</script></body></html>
+</div></article><div class="back"><a href="/blog/">← BACK TO NOTES</a></div></main></body></html>

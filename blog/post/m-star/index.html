@@ -1,0 +1,171 @@
+<!DOCTYPE html><html lang="zh-CN"><head><meta charset="utf-8"><meta name="viewport" content="width=device-width,initial-scale=1,maximum-scale=2"><meta http-equiv="X-UA-Compatible" content="IE=edge,chrome=1"><meta name="theme-color" content="#060606"><style>
+:root{--bg:#060606;--text:#b6b6b6;--text-dim:#4a4a50;--accent:#5f8de0;--border:#1a1a20}
+*{box-sizing:border-box;margin:0;padding:0}
+html{font-size:20px}
+body{background:var(--bg);color:var(--text);font-family:"Helvetica Neue","Microsoft Yahei",-apple-system,sans-serif;-webkit-font-smoothing:antialiased;line-height:1.9}
+canvas#grid{position:fixed;top:0;left:0;width:100%;height:100%;z-index:0;pointer-events:none;opacity:0.5}
+.container{position:relative;z-index:1;max-width:640px;margin:0 auto;padding:8vh 30px 80px}
+.header{margin-bottom:50px}
+.header h1{font-size:1.4rem;font-weight:300;color:#e8e8e8;letter-spacing:1px;margin-bottom:16px;line-height:1.5}
+.header .meta{font-size:0.65rem;color:var(--text-dim);letter-spacing:2px;display:flex;gap:10px;align-items:center}
+.header .meta .dot{width:4px;height:4px;background:#333;border-radius:50%}
+.tags{display:flex;gap:8px;margin-top:14px}
+.tags span{padding:2px 10px;border:1px solid var(--border);border-radius:12px;font-size:0.6rem;color:var(--text-dim);letter-spacing:1px}
+.article{font-size:0.82rem;color:#8a8a92;font-weight:300}
+.article h2{font-size:1.05rem;color:#c0c0c8;font-weight:400;margin:40px 0 16px;letter-spacing:1px}
+.article h3{font-size:0.9rem;color:#a8a8b0;font-weight:400;margin:32px 0 12px}
+.article p{margin-bottom:18px}
+.article b,.article strong{color:#b0b0b8;font-weight:400}
+.article code{color:#d2906e;font-size:0.75rem;background:rgba(255,255,255,0.04);padding:1px 6px;border-radius:3px}
+.article pre{background:rgba(255,255,255,0.03);border:1px solid var(--border);border-radius:6px;padding:14px 18px;overflow-x:auto;font-size:0.72rem;line-height:1.6;margin:16px 0;color:#9a9aa2}
+.article ul,.article ol{margin:12px 0 18px 20px}
+.article li{margin-bottom:8px}
+.article blockquote{border-left:2px solid var(--accent);margin:20px 0;padding:10px 20px;color:#6a6a74;font-style:italic}
+.article blockquote p{margin:0}
+.article hr{border:none;border-top:1px solid var(--border);margin:32px 0}
+.article a{color:var(--accent)}
+.article img{max-width:100%;border-radius:6px}
+.back{margin-top:60px}
+.back a{color:#333;font-size:0.7rem;letter-spacing:2px;text-decoration:none;transition:color .4s}
+.back a:hover{color:#666}
+.list-header{text-align:center;margin-bottom:80px}
+.list-header h1{font-size:2.4rem;font-weight:200;color:#f0f0f0;letter-spacing:4px;margin-bottom:12px}
+.list-header .sub{font-size:0.8rem;color:var(--text-dim);letter-spacing:2px;font-weight:300}
+.posts{list-style:none;display:flex;flex-direction:column;gap:32px}
+.post-item{padding:0 0 32px;border-bottom:1px solid var(--border);transition:border-color .4s}
+.post-item:last-child{border-bottom:none}
+.post-item:hover{border-color:#2a2a34}
+.post-title{font-size:1.1rem;font-weight:400;margin-bottom:6px;letter-spacing:.5px}
+.post-title a{color:#e0e0e0;text-decoration:none;transition:color .3s}
+.post-title a:hover{color:var(--accent)}
+.post-meta{font-size:0.65rem;color:var(--text-dim);letter-spacing:1px;margin-bottom:10px;display:flex;gap:10px;align-items:center}
+.post-desc{font-size:0.8rem;color:#6a6a72;line-height:1.9;font-weight:300}
+.tag{display:inline-block;padding:2px 10px;border:1px solid var(--border);border-radius:12px;font-size:0.6rem;color:var(--text-dim);letter-spacing:1px}
+@media(max-width:768px){.container{padding:5vh 20px 60px}.header h1,.list-header h1{font-size:1.2rem}}
+.thought-list{font-size:0.85rem;color:#8a8a92;line-height:2}
+.thought-list h1,.thought-list h2,.thought-list h3{margin:0 0 20px}
+.thought-list ol{counter-reset:t;list-style:none;padding:0}
+.thought-list ol>li{position:relative;padding:22px 0 22px 48px;border-bottom:1px solid var(--border);counter-increment:t;font-size:0.82rem;line-height:1.8}
+.thought-list ol>li:last-child{border-bottom:none}
+.thought-list ol>li:before{content:counter(t,decimal-leading-zero);position:absolute;left:0;top:22px;font-size:0.65rem;color:var(--text-dim);font-weight:300;letter-spacing:1px}
+.thought-list ol>li strong,.thought-list ol>li b{color:#b8b8c0;font-weight:400}
+.thought-list ol>li a{color:var(--accent);text-decoration:none;font-size:0.75rem}
+.thought-list ol>li a:hover{color:#80b0f0}
+.thought-list ol>li p{margin-bottom:8px}
+.thought-list ol>li ul,.thought-list ol>li ol{margin:6px 0;padding-left:16px}
+.thought-list ol>li ul li,.thought-list ol>li ol li{border:none;padding:2px 0;font-size:0.8rem}
+.thought-list ol>li ul li:before{content:none}
+</style><title>M★：多模态推理的自进化训练框架 · Auince</title><meta name="description" content="系统分析 M★ 如何在多模态推理中实现迭代自我改进，重点解析连续训练策略、过程奖励模型的重排序角色、探索衰减监控与动态温度调节机制"><link rel="canonical" href="https://auince.github.io/blog/post/m-star/"><link rel="icon" href="/favicon.ico"><link rel="stylesheet" href="/css/blog.css"></head><body><main class="container blog-article"><nav class="site-nav" aria-label="文章导航"><a href="/blog/">← Notes</a><a href="/">Auince /</a></nav><article><header class="header"><p class="eyebrow">自进化</p><h1>M★：多模态推理的自进化训练框架</h1><div class="meta"><span>阅读于 <time datetime="2026-09-22">2026-09-22</time></span></div><div class="tags"><span>多模态推理</span><span>PRM</span><span>探索</span></div><p class="paper-source"><a href="https://proceedings.mlr.press/v267/liu25aj.html" target="_blank" rel="noopener noreferrer">Diving into Self-Evolving Training for Multimodal Reasoning ↗</a></p></header><div class="article"><p>自进化训练让模型从自身输出中迭代学习。纯文本推理任务上已有诸多探索，但多模态推理更复杂——图像理解与逻辑推演交织，训练中的探索与利用平衡更难把握。M★ 提出系统化框架，通过受控实验明确训练方法、奖励模型、提示变化三个设计因子的作用，用动态监控指标缓解性能饱和[1]。</p>
+<p>本文按 2026 年 9 月 22 日的阅读笔记整理，重点分析 M★ 的机制设计与实证边界；相关文献于 2026 年 10 月 13 日补充核对。未进行独立复现。</p>
+<h2>自进化训练的多模态挑战</h2>
+<p>自进化训练的核心思路：策略模型 <span class="katex"><math xmlns="http://www.w3.org/1998/Math/MathML"><semantics><mrow><msub><mi>π</mi><mi>θ</mi></msub></mrow><annotation encoding="application/x-tex">\pi_\theta</annotation></semantics></math></span> 生成响应，奖励模型 <span class="katex"><math xmlns="http://www.w3.org/1998/Math/MathML"><semantics><mrow><mi>r</mi></mrow><annotation encoding="application/x-tex">r</annotation></semantics></math></span> 筛选高质量样本，再对这些样本微调改进策略。STaR（Self-Taught Reasoner）在纯文本数学推理中演示了这一循环：模型生成推理链（rationale），答案错误时用正确答案作提示重新生成，最终只在导向正确答案的推理链上训练[2]。这种答案条件重试依赖明确的文本标注。</p>
+<p>多模态推理的难点：</p>
+<ul>
+<li><strong>感知与推理耦合</strong>：模型需从图像提取关键信息，再执行多步逻辑。错误可能源于视觉理解偏差或推理步骤错误，奖励信号难以独立归因。</li>
+<li><strong>数据稀缺性</strong>：高质量图文推理标注成本远高于纯文本，无标注数据的引入路径更不明确。</li>
+<li><strong>探索能力衰减</strong>：迭代训练中模型倾向收敛到已知正确路径，对新问题的探索潜力持续下降。</li>
+</ul>
+<p>M★ 将这些挑战形式化为强化学习视角下的三个设计维度，在 MathVista、M3CoT 等多模态数学推理基准上系统评估各维度的边界。</p>
+<h2>连续自进化：继承优化器状态的迭代训练</h2>
+<p>传统迭代微调每轮开始时仅加载上一轮模型参数 <span class="katex"><math xmlns="http://www.w3.org/1998/Math/MathML"><semantics><mrow><msub><mi>θ</mi><mi>t</mi></msub></mrow><annotation encoding="application/x-tex">\theta_t</annotation></semantics></math></span>，优化器状态（如 Adam 的动量项 <span class="katex"><math xmlns="http://www.w3.org/1998/Math/MathML"><semantics><mrow><mi>m</mi><mo separator="true">,</mo><mi>v</mi></mrow><annotation encoding="application/x-tex">m, v</annotation></semantics></math></span>）与学习率调度器重新初始化。这相当于把每轮视为独立的离线训练过程。M★ 提出的<strong>连续自进化</strong>（Continuous Self-Evolving）不仅继承 <span class="katex"><math xmlns="http://www.w3.org/1998/Math/MathML"><semantics><mrow><msub><mi>θ</mi><mi>t</mi></msub></mrow><annotation encoding="application/x-tex">\theta_t</annotation></semantics></math></span>，还继承优化器状态与调度器进度，使训练接近在线强化学习的连续更新[1]。</p>
+<h2>过程奖励模型：重排序而非验证</h2>
+<p>M★ 训练了多模态的过程级奖励模型（Process-based Reward Model, PRM）[1]。结果奖励模型（Outcome-based RM）仅判断最终答案，PRM 对推理链中每个步骤打分，理论上能更精细地识别错误位置。</p>
+<h3>训练方法</h3>
+<p>PRM 训练时冻结视觉编码器。标注采用 Monte Carlo rollout：对每个中间步骤，从该步开始用策略模型继续生成 16 次完整推理链，步骤奖励定义为这 16 次补全的正确答案比例均值。最终用均方误差（MSE）损失训练 PRM，使其输出的标量分数逼近该比例[1]。</p>
+<p>PRM 为生成的链式思考（Chain-of-Thought, CoT）响应打分。一条响应的总奖励取所有步骤分数的<strong>最小值</strong>（min 聚合）。</p>
+<h3>奖励使用策略对比</h3>
+<p>三个关键观察：</p>
+<ol>
+<li><strong>随机选择正确答案反而劣于重排序</strong>：即使答案正确，推理步骤可能冗长、与问题相关性低。论文将这类响应称为&quot;噪声&quot;，说明正确答案不等于高质量训练信号[1]。</li>
+<li><strong>阈值过滤失败</strong>：固定阈值 <span class="katex"><math xmlns="http://www.w3.org/1998/Math/MathML"><semantics><mrow><mi>α</mi></mrow><annotation encoding="application/x-tex">\alpha</annotation></semantics></math></span> 导致&quot;全保留&quot;或&quot;全过滤&quot;的二元结果，损害样本多样性[1]。</li>
+<li><strong>PRM 在推理时表现差</strong>：Best-of-N 与 weighted voting 均劣于简单的多数投票，表明 PRM 验证能力弱——它无法可靠地为无 ground truth 的新问题打分[1]。</li>
+</ol>
+<p><strong>分析</strong>：PRM 的有效角色是<strong>重排序器</strong>（reranker）而非验证器（verifier）。在已知答案正确的响应集合中，PRM 能识别步骤更简洁、逻辑连贯性更高的样本；但在开放验证场景中，它无法区分&quot;看似合理但错误&quot;与&quot;真正正确&quot;的推理。这一限制源于训练数据——PRM 的步骤标注依赖策略模型的 rollout 正确率，本质上在学习&quot;什么样的步骤更可能导向正确答案&quot;，而非&quot;该步骤是否客观正确&quot;。</p>
+<p>与 STaR 的对比：STaR 用正确答案作监督信号，通过答案条件重试确保推理链与标签一致[2]。M★ 的 PRM 试图在无外部标签时仍能筛选，但实验表明这一泛化能力尚未实现。两者都依赖正确答案过滤，区别在于 STaR 在生成阶段就引入答案，M★ 先按答案过滤，再做重排序。</p>
+<h2>提示变化的失败：无标注数据的困境</h2>
+<p>直觉上，引入无标注的多样化提示应能提升模型对分布外（OOD）问题的泛化能力。M★ 测试了混入无标注提示、用 weighted voting 生成伪标签的方案，但在所评估的配置中未得到一致收益[1]：</p>
+<p><strong>在 oracle 奖励下</strong>（假设有完美的奖励函数）：</p>
+<ul>
+<li>无标注数据对 OOD 基准（M3CoT）略有帮助，但在 ID 基准（MathVista）上反而下降[1]。</li>
+</ul>
+<p><strong>在 PRM 奖励下</strong>（实际可用设定）：</p>
+<ul>
+<li>所有无标注数据配置（不同混入比例、不同引入时机）<strong>全部劣于仅用标注数据</strong>[1]。</li>
+<li>越晚引入无标注数据，负面影响越小，但仍未达到仅使用标注数据的基线。</li>
+</ul>
+<p><strong>原因</strong>：PRM 无法为无 ground truth 的响应可靠打分。Weighted voting 生成的伪标签质量取决于奖励模型的验证能力，而前述实验已表明 PRM 在验证任务上表现弱于多数投票。错误的伪标签引入噪声，抵消多样性收益。论文将改进奖励模型以提升无标注数据利用能力明确列为未来工作[1]。</p>
+<p>这一结果与监督学习中的一般规律一致：伪标签的收益上限受制于标注模型的准确率。在多模态推理这一高复杂度任务上，当前 PRM 的泛化能力尚不足以支撑无标注扩展。</p>
+<h2>探索衰减与动态温度调节</h2>
+<p>M★ 提出新指标 <strong>Reward-Pass@2</strong>：在奖励最高的前 2 条响应中，至少有一条答案正确的比例[1]。该指标桥接探索（Pass@K，<span class="katex"><math xmlns="http://www.w3.org/1998/Math/MathML"><semantics><mrow><mi>K</mi></mrow><annotation encoding="application/x-tex">K</annotation></semantics></math></span> 条响应中任意一条正确的比例）与利用（Greedy Accuracy，单条贪婪解码的准确率）。</p>
+<p>训练动态监控揭示两个现象：</p>
+<ol>
+<li><strong>Pass@K 持续下降</strong>：随训练推进，固定采样预算内至少命中一次正确答案的比例下降，提示探索能力流失[1]。</li>
+<li><strong>Reward-Pass@2 快速平台</strong>：该指标在训练早期迅速上升后进入平台期[1]。</li>
+</ol>
+<p>Pass@K 下降被认为是性能饱和的根源之一。为缓解探索衰减，M★ 提出<strong>自动温度调节</strong>：</p>
+<ul>
+<li>每两个 iteration，从候选温度集合 0.3–1.6（步长 0.1） 中选择使验证集 Reward-Pass@2 最大的温度用于下一轮生成[1]。</li>
+<li>更高温度增加采样随机性，鼓励探索；更低温度聚焦高概率路径，强化已学模式。</li>
+</ul>
+<p>实验表明，相比固定温度 <span class="katex"><math xmlns="http://www.w3.org/1998/Math/MathML"><semantics><mrow><mi>T</mi><mo>=</mo><mn>1.0</mn></mrow><annotation encoding="application/x-tex">T=1.0</annotation></semantics></math></span>，自动调温普遍提升 Reward-Pass@2 并缓解 Pass@K 下滑[1]。</p>
+<p><strong>需注意的错配</strong>：Reward-Pass@2 衡量的是&quot;前 2 条响应中含正确答案的比例&quot;，而训练策略是&quot;先按答案过滤再按 PRM 重排序&quot;。理想情况下，指标应直接衡量 CoT 质量（如步骤简洁性、逻辑连贯性），但论文将 Reward-Pass@2 视为&quot;合理近似&quot;[1]。这一近似在答案准确率与推理质量强相关时有效，但若两者解耦（例如某些问题可通过捷径解法绕过推理），该指标可能失灵。</p>
+<h2>实证边界与规模依赖</h2>
+<p>M★ 在三个模型规模上验证（MathVista 测试集，相对 warmup 起点）：</p>
+<div class="table-scroll" tabindex="0"><table>
+<thead>
+<tr>
+<th>模型</th>
+<th>起点</th>
+<th>M★ 终点</th>
+<th>提升</th>
+</tr>
+</thead>
+<tbody><tr>
+<td>MiniCPM-V-2.5</td>
+<td>52.6</td>
+<td><strong>59.5</strong></td>
+<td>+6.7</td>
+</tr>
+<tr>
+<td>Phi-3.5-Vision</td>
+<td>49.3</td>
+<td><strong>54.5</strong></td>
+<td>+5.2</td>
+</tr>
+<tr>
+<td>InternVL2-2B</td>
+<td>47.6</td>
+<td><strong>50.3</strong></td>
+<td>+2.7</td>
+</tr>
+</tbody></table></div>
+<p>跨基准表现（MathVista / M3CoT / MMStar-R / MMBench-R / AI2D 平均）：</p>
+<ul>
+<li>MiniCPM-V-2.5：57.7 → 61.6</li>
+<li>Phi-3.5-Vision：55.3 → 59.2</li>
+<li>InternVL2-2B：在 MMBench-R 与 AI2D（感知密集型任务）上反而下降[1]</li>
+</ul>
+<p><strong>规模依赖</strong>：模型越大，收益越全面。小模型（InternVL2-2B）在跨域泛化时易受负面影响，尤其需要细粒度视觉识别的任务。可能的原因：</p>
+<ul>
+<li>小模型容量有限，在数学推理样本上迭代训练后，视觉编码器（冻结或部分微调）与语言部分的对齐退化。</li>
+<li>PRM 本身基于 7B 模型训练，其奖励信号可能与 2B 模型的推理模式存在不匹配。</li>
+</ul>
+<p>实验均在定长 10K steps、单一随机种子下报告，未见消融不同种子或训练步数的影响[1]。这削弱了&quot;通用性&quot;主张的强度——小模型上的负面结果提示该框架并非对所有规模稳健。</p>
+<h2>与视觉自奖励的对照</h2>
+<p>M-STAR[1] 和 Vision-SR1[3] 都在推理过程中引入了自我评估机制,但监督目标的粒度不同。M-STAR 先用 ground truth 过滤出正确答案的响应候选,再用 PRM(过程奖励模型)对这些候选的推理步骤重排序;PRM 专注于比较已知正确答案的轨迹质量,而非独立验证无标注答案的正确性。Vision-SR1 在视觉推理的中间表示层引入奖励:第一轮模型看到图像和问题,生成视觉描述 c、推理 t 和答案 a;第二轮去掉原图,仅基于问题和 c 重新生成推理与答案,用第二轮答案的正确性作为奖励信号反馈给视觉描述。这一机制验证的是&quot;描述 c 对下游推理是否有用&quot;,而非描述本身是否忠实于图像内容。</p>
+<p>两者的监督信号最终都锚定在答案层面的正确性判断上。M-STAR 依赖预先过滤的正确答案集合,PRM 在此基础上细化轨迹偏好;Vision-SR1 用第二轮答案准确率作为描述质量的代理指标,但有用的描述未必准确,准确的描述也可能对推理无益。当监督目标从最终答案细化到中间步骤或表示时,如何在保持可验证性的同时避免代理指标与真实目标的偏离?现有方法尚未给出无需外部标注答案即可可靠评估推理质量的通用方案,这一问题仍待验证分析。</p>
+<h2>未解问题与未来方向</h2>
+<ol>
+<li><strong>独立归因缺失</strong>：Pass@K 下降与性能饱和的关联是观察到的共现现象，而非因果证明。可能存在其他混淆因素（如训练数据重复、模型容量耗尽）同时导致两者[1]。</li>
+<li><strong>PRM 的泛化瓶颈</strong>：当前 PRM 依赖策略模型自身的 rollout 标注，难以超越策略的认知边界。改进方向包括引入人类偏好标注、对比学习、或训练独立的视觉理解验证器。</li>
+<li><strong>优化器与调度器继承的理论基础</strong>：连续继承在实验中有效，但缺少理论分析说明为何动量项在策略分布漂移下仍保持有益。是否存在需要重置优化器的情况（如分布突变）？</li>
+<li><strong>小模型的容量-泛化权衡</strong>：InternVL2-2B 的负面结果提示存在模型规模下限，但该下限如何随任务复杂度与数据多样性变化，尚无定量刻画。</li>
+</ol>
+<p>M★ 为多模态自进化训练提供了系统化框架，明确了连续训练策略、过程奖励模型重排序角色、探索监控指标的设计原则。其核心洞察——PRM 适合重排序而非验证、探索衰减需动态调节、当前配置未从无标注数据中获益——为后续研究划定了边界。在实际应用中，需根据模型规模、任务类型、数据预算权衡该范式的适用性，并持续监控训练动态以避免过拟合到狭窄的推理模式。</p>
+<hr>
+<p><strong>来源说明</strong>：本文基于 2026 年 9 月 22 日的论文阅读笔记整理，相关文献引用于 2026 年 10 月 13 日补充核对。未进行独立实验复现，所有实验结果与机制描述均引自原论文。</p>
+<h2>参考文献</h2>
+<p>[1] <a href="https://proceedings.mlr.press/v267/liu25aj.html">Diving into Self-Evolving Training for Multimodal Reasoning</a></p>
+<p>[2] <a href="https://arxiv.org/abs/2203.14465">STaR: Bootstrapping Reasoning With Reasoning</a></p>
+<p>[3] <a href="https://arxiv.org/abs/2508.19652">Self-Rewarding Vision-Language Model via Reasoning Decomposition</a></p>
+</div></article><div class="back"><a href="/blog/">← BACK TO NOTES</a></div></main></body></html>

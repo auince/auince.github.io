@@ -1,0 +1,114 @@
+<!DOCTYPE html><html lang="zh-CN"><head><meta charset="utf-8"><meta name="viewport" content="width=device-width,initial-scale=1,maximum-scale=2"><meta http-equiv="X-UA-Compatible" content="IE=edge,chrome=1"><meta name="theme-color" content="#060606"><style>
+:root{--bg:#060606;--text:#b6b6b6;--text-dim:#4a4a50;--accent:#5f8de0;--border:#1a1a20}
+*{box-sizing:border-box;margin:0;padding:0}
+html{font-size:20px}
+body{background:var(--bg);color:var(--text);font-family:"Helvetica Neue","Microsoft Yahei",-apple-system,sans-serif;-webkit-font-smoothing:antialiased;line-height:1.9}
+canvas#grid{position:fixed;top:0;left:0;width:100%;height:100%;z-index:0;pointer-events:none;opacity:0.5}
+.container{position:relative;z-index:1;max-width:640px;margin:0 auto;padding:8vh 30px 80px}
+.header{margin-bottom:50px}
+.header h1{font-size:1.4rem;font-weight:300;color:#e8e8e8;letter-spacing:1px;margin-bottom:16px;line-height:1.5}
+.header .meta{font-size:0.65rem;color:var(--text-dim);letter-spacing:2px;display:flex;gap:10px;align-items:center}
+.header .meta .dot{width:4px;height:4px;background:#333;border-radius:50%}
+.tags{display:flex;gap:8px;margin-top:14px}
+.tags span{padding:2px 10px;border:1px solid var(--border);border-radius:12px;font-size:0.6rem;color:var(--text-dim);letter-spacing:1px}
+.article{font-size:0.82rem;color:#8a8a92;font-weight:300}
+.article h2{font-size:1.05rem;color:#c0c0c8;font-weight:400;margin:40px 0 16px;letter-spacing:1px}
+.article h3{font-size:0.9rem;color:#a8a8b0;font-weight:400;margin:32px 0 12px}
+.article p{margin-bottom:18px}
+.article b,.article strong{color:#b0b0b8;font-weight:400}
+.article code{color:#d2906e;font-size:0.75rem;background:rgba(255,255,255,0.04);padding:1px 6px;border-radius:3px}
+.article pre{background:rgba(255,255,255,0.03);border:1px solid var(--border);border-radius:6px;padding:14px 18px;overflow-x:auto;font-size:0.72rem;line-height:1.6;margin:16px 0;color:#9a9aa2}
+.article ul,.article ol{margin:12px 0 18px 20px}
+.article li{margin-bottom:8px}
+.article blockquote{border-left:2px solid var(--accent);margin:20px 0;padding:10px 20px;color:#6a6a74;font-style:italic}
+.article blockquote p{margin:0}
+.article hr{border:none;border-top:1px solid var(--border);margin:32px 0}
+.article a{color:var(--accent)}
+.article img{max-width:100%;border-radius:6px}
+.back{margin-top:60px}
+.back a{color:#333;font-size:0.7rem;letter-spacing:2px;text-decoration:none;transition:color .4s}
+.back a:hover{color:#666}
+.list-header{text-align:center;margin-bottom:80px}
+.list-header h1{font-size:2.4rem;font-weight:200;color:#f0f0f0;letter-spacing:4px;margin-bottom:12px}
+.list-header .sub{font-size:0.8rem;color:var(--text-dim);letter-spacing:2px;font-weight:300}
+.posts{list-style:none;display:flex;flex-direction:column;gap:32px}
+.post-item{padding:0 0 32px;border-bottom:1px solid var(--border);transition:border-color .4s}
+.post-item:last-child{border-bottom:none}
+.post-item:hover{border-color:#2a2a34}
+.post-title{font-size:1.1rem;font-weight:400;margin-bottom:6px;letter-spacing:.5px}
+.post-title a{color:#e0e0e0;text-decoration:none;transition:color .3s}
+.post-title a:hover{color:var(--accent)}
+.post-meta{font-size:0.65rem;color:var(--text-dim);letter-spacing:1px;margin-bottom:10px;display:flex;gap:10px;align-items:center}
+.post-desc{font-size:0.8rem;color:#6a6a72;line-height:1.9;font-weight:300}
+.tag{display:inline-block;padding:2px 10px;border:1px solid var(--border);border-radius:12px;font-size:0.6rem;color:var(--text-dim);letter-spacing:1px}
+@media(max-width:768px){.container{padding:5vh 20px 60px}.header h1,.list-header h1{font-size:1.2rem}}
+.thought-list{font-size:0.85rem;color:#8a8a92;line-height:2}
+.thought-list h1,.thought-list h2,.thought-list h3{margin:0 0 20px}
+.thought-list ol{counter-reset:t;list-style:none;padding:0}
+.thought-list ol>li{position:relative;padding:22px 0 22px 48px;border-bottom:1px solid var(--border);counter-increment:t;font-size:0.82rem;line-height:1.8}
+.thought-list ol>li:last-child{border-bottom:none}
+.thought-list ol>li:before{content:counter(t,decimal-leading-zero);position:absolute;left:0;top:22px;font-size:0.65rem;color:var(--text-dim);font-weight:300;letter-spacing:1px}
+.thought-list ol>li strong,.thought-list ol>li b{color:#b8b8c0;font-weight:400}
+.thought-list ol>li a{color:var(--accent);text-decoration:none;font-size:0.75rem}
+.thought-list ol>li a:hover{color:#80b0f0}
+.thought-list ol>li p{margin-bottom:8px}
+.thought-list ol>li ul,.thought-list ol>li ol{margin:6px 0;padding-left:16px}
+.thought-list ol>li ul li,.thought-list ol>li ol li{border:none;padding:2px 0;font-size:0.8rem}
+.thought-list ol>li ul li:before{content:none}
+</style><title>上下文优先的视觉语言模型自进化：解耦学习与应用 · Auince</title><meta name="description" content="DoGe 通过双阶段强化学习将情境理解与问题求解解耦，在数据稀缺的专业领域维持探索能力，但增益归因与机制验证仍有待完善"><link rel="canonical" href="https://auince.github.io/blog/post/doge-context-first/"><link rel="icon" href="/favicon.ico"><link rel="stylesheet" href="/css/blog.css"></head><body><main class="container blog-article"><nav class="site-nav" aria-label="文章导航"><a href="/blog/">← Notes</a><a href="/">Auince /</a></nav><article><header class="header"><p class="eyebrow">自进化</p><h1>上下文优先的视觉语言模型自进化：解耦学习与应用</h1><div class="meta"><span>阅读于 <time datetime="2026-09-20">2026-09-20</time></span><span>补充于 <time datetime="2026-09-23">2026-09-23</time></span></div><div class="tags"><span>VLM</span><span>GRPO</span><span>上下文学习</span></div><p class="paper-source"><a href="https://arxiv.org/abs/2512.06835" target="_blank" rel="noopener noreferrer">Decouple to Generalize: Context-First Self-Evolving Learning for Data-Scarce Vision-Language Reasoning ↗</a></p></header><div class="article"><p>多模态强化学习已证明能解锁视觉语言模型的多步推理，但化学、地球科学等专业领域的高质量标注数据稀缺始终是瓶颈。合成数据分布易收敛，自奖励机制常与推理任务目标错位，导致模型走捷径、策略熵崩塌、训练不稳定。DoGe（Decouple to Generalize）[1] 把监督信号从&quot;答案正确&quot;前移到&quot;情境理解有用&quot;：用双阶段强化学习将上下文分析与问题求解解耦。论文在 Qwen2.5-VL-3B/7B 上迭代三轮，7 个 benchmark 平均提升 5.7%（3B）和 2.3%（7B），并声称减轻了多模态 RL 常见的文本推理退化。</p>
+<p>解耦设计能否独立归因，&quot;上下文优先&quot;与已有 caption-first、推理分解方法在机制上有何不同，是本文重点。</p>
+<h2>双阶段 RL：Thinker 学习，Solver 冻结，跨轮更新角色参数</h2>
+<p>DoGe 把同一基座模型在训练中拆成两个功能组件：<strong>Thinker</strong>（可学习）分析上下文，<strong>Solver</strong>（参数冻结）解题。每轮迭代开始时两者都从上一轮基座参数初始化，<span class="katex"><math xmlns="http://www.w3.org/1998/Math/MathML"><semantics><mrow><msubsup><mi>π</mi><mi>T</mi><mrow><mo stretchy="false">(</mo><mi>t</mi><mo stretchy="false">)</mo></mrow></msubsup><mo>=</mo><msubsup><mi>π</mi><mi>S</mi><mrow><mo stretchy="false">(</mo><mi>t</mi><mo stretchy="false">)</mo></mrow></msubsup><mo>←</mo><msup><mi>π</mi><mrow><mo stretchy="false">(</mo><mi>t</mi><mo stretchy="false">)</mo></mrow></msup></mrow><annotation encoding="application/x-tex">\pi_T^{(t)} = \pi_S^{(t)} \gets \pi^{(t)}</annotation></semantics></math></span>。</p>
+<p><strong>Stage 1 — Learning from Context</strong>：Thinker 接收<strong>问题遮蔽后的输入</strong> <span class="katex"><math xmlns="http://www.w3.org/1998/Math/MathML"><semantics><mrow><mover accent="true"><mi>x</mi><mo>~</mo></mover><mo>=</mo><mtext>Mask</mtext><mo stretchy="false">(</mo><mi>x</mi><mo separator="true">,</mo><mi>q</mi><mo stretchy="false">)</mo></mrow><annotation encoding="application/x-tex">\tilde{x} = \text{Mask}(x, q)</annotation></semantics></math></span>——去掉题干中的问题与答案线索，只看图像和情境描述，输出文本分析 <span class="katex"><math xmlns="http://www.w3.org/1998/Math/MathML"><semantics><mrow><mi>a</mi></mrow><annotation encoding="application/x-tex">a</annotation></semantics></math></span>。冻结的 Solver 拿到原始问题 <span class="katex"><math xmlns="http://www.w3.org/1998/Math/MathML"><semantics><mrow><mo stretchy="false">(</mo><mi>x</mi><mo separator="true">,</mo><mi>q</mi><mo separator="true">,</mo><mi>a</mi><mo stretchy="false">)</mo></mrow><annotation encoding="application/x-tex">(x, q, a)</annotation></semantics></math></span> 解题，产生答案 <span class="katex"><math xmlns="http://www.w3.org/1998/Math/MathML"><semantics><mrow><mover accent="true"><mi>y</mi><mo>^</mo></mover></mrow><annotation encoding="application/x-tex">\hat{y}</annotation></semantics></math></span>。Thinker 的奖励包含 Solver 通过率和格式项。</p>
+<p>格式项是 <code>⟨think⟩...⟨/think⟩</code> 格式二值奖励。设计逻辑是：Thinker 输出的分析能帮 Solver 答对题，这段分析就有价值。论文用 GRPO（Group Relative Policy Optimization）更新 Thinker 参数，每题采样 4 条分析，每条分析让 Solver 跑 4 次解题，共 16 次推理估计奖励。</p>
+<p><strong>Stage 2 — Learning from Application</strong>：更新后的 Thinker 不再只分析上下文，直接在原始问题 <span class="katex"><math xmlns="http://www.w3.org/1998/Math/MathML"><semantics><mrow><mo stretchy="false">(</mo><mi>x</mi><mo separator="true">,</mo><mi>q</mi><mo stretchy="false">)</mo></mrow><annotation encoding="application/x-tex">(x, q)</annotation></semantics></math></span> 上解题。这一阶段用标准 GRPO 训练，奖励同样是答案正确性加格式奖励，但输入恢复完整。论文称这个阶段把&quot;学到的情境理解内化为推理能力&quot;。Stage 2 结束后，新 Thinker 参数 <span class="katex"><math xmlns="http://www.w3.org/1998/Math/MathML"><semantics><mrow><msubsup><mi>π</mi><mi>T</mi><mrow><mo stretchy="false">(</mo><mi>t</mi><mo>+</mo><mn>1</mn><msup><mo stretchy="false">)</mo><mo mathvariant="normal" lspace="0em" rspace="0em">′</mo></msup></mrow></msubsup></mrow><annotation encoding="application/x-tex">\pi_T^{(t+1)&#x27;}</annotation></semantics></math></span> 初始化下一轮 Thinker 和 Solver——Thinker 越强，下一轮 Solver 的反馈越有判别力。</p>
+<p>这个设计在形式上类似 Vision-SR1 [2] 的推理分解（先视觉描述 <span class="katex"><math xmlns="http://www.w3.org/1998/Math/MathML"><semantics><mrow><mi>c</mi></mrow><annotation encoding="application/x-tex">c</annotation></semantics></math></span>，再基于 <span class="katex"><math xmlns="http://www.w3.org/1998/Math/MathML"><semantics><mrow><mi>c</mi></mrow><annotation encoding="application/x-tex">c</annotation></semantics></math></span> 解题，用答案正确性反向监督描述质量），但 DoGe 强调&quot;遮蔽问题&quot;而非&quot;生成描述&quot;，并把 Solver 冻结以避免两角色同时漂移。论文没给出 caption-first GRPO 或&quot;先训 Thinker 但奖励只看格式&quot;的对照实验，无法确定增益来自&quot;解耦&quot;本身、遮蔽输入形态还是多阶段训练的额外算力。</p>
+<h2>数据管线：知识池与种子池的课程构造</h2>
+<p>DoGe 维护两个数据池支持迭代训练：</p>
+<p><strong>Multimodal Knowledge Pool</strong>：无标注多模态原始数据，包括约 10k 张几何题图，约 2500 个分子结构图（通过 PubChem API + RDKit 生成，附 IUPAC 名称、TPSA、分子量等属性），约 1500 条地球卫星图（NASA EPIC，附拍摄日期）。数据按信息密度分为 Information Rich / Poor，对 Poor 样本调用 Gemini-2.5-Flash 生成专家级分析报告补全，缺图的用工具生成。</p>
+<p><strong>Seed Problem Pool</strong>：存放&quot;偶尔可解&quot;的问题（通过率 <span class="katex"><math xmlns="http://www.w3.org/1998/Math/MathML"><semantics><mrow><mo>∈</mo><mo stretchy="false">[</mo><mn>0.1</mn><mo separator="true">,</mo><mn>0.3</mn><mo stretchy="false">]</mo></mrow><annotation encoding="application/x-tex">\in [0.1, 0.3]</annotation></semantics></math></span>），每轮迭代更新，用于合成有挑战性变体题。化学领域用 SMolInstruct 约 1.2k 改写题初始化。论文描述是&quot;current policy model&quot;合成新题，但没说&quot;当前策略&quot;指 Thinker、Solver 还是基座，也没说采样次数与答案标注可靠性。</p>
+<h2>增益归因：Stage 1 的收益穿过 Stage 2 了吗</h2>
+<p>论文在 7 个 benchmark 上报告三轮迭代结果（MMMU、MMStar、HallusionBench、MathVision、MathVista、ChemBench、MSEarthMCQ），用 <span class="katex"><math xmlns="http://www.w3.org/1998/Math/MathML"><semantics><mrow><msub><mi mathvariant="normal">Δ</mi><mtext>max</mtext></msub></mrow><annotation encoding="application/x-tex">\Delta_{\text{max}}</annotation></semantics></math></span>（三轮取最大）作汇报口径。3B 平均 +5.7%，7B 平均 +2.3%。但逐轮看：</p>
+<ul>
+<li><strong>7B Iter1</strong>：HallBench 从 66.3 掉到 <strong>54.4</strong>。</li>
+<li><strong>消融幅度小</strong>：表 2 显示 Iter3 平均 DoGe 48.9 vs w/o DoGe 48.6，差距仅 <strong>0.3</strong>；Iter1 差距 0.8，Iter2 差距 0.1。</li>
+</ul>
+<p>论文只评测每轮末端（Stage 2 结束后的 checkpoint），Stage 1 结束时的 Thinker 没单独在 benchmark 上跑过。因此无法判断 Stage 1 学到的&quot;情境理解&quot;是否真传递到 Stage 2，还是被 Stage 2 的标准 GRPO 完全覆盖。如果 Stage 1 收益在 Stage 2 被洗掉，&quot;上下文优先&quot;只是昂贵的数据课程初始化，非独立机制贡献。</p>
+<h2>策略熵：提升来源未拆分</h2>
+<p>论文核心动机之一是&quot;双阶段解耦能维持更高策略熵，避免基线熵崩塌&quot;。图 4 给出 EMA 平滑后的平均熵曲线，DoGe 在 Stage 2 开始时有更高初始熵，训练中维持更高探索。但缺两个对照：</p>
+<ol>
+<li><strong>在遮蔽输入上跑等步数 naive GRPO</strong>：区分&quot;双阶段结构&quot;与&quot;输入形态（遮蔽 vs 完整）&quot;对熵的影响。</li>
+<li><strong>熵的定量指标</strong>：初始/最低/末值、曲线下面积、reward hacking 的直接度量（响应长度膨胀、格式刷分率、分析文本模板化重复率）。</li>
+</ol>
+<h2>与相关工作的对照</h2>
+<p>DoGe 的&quot;先分析后解题&quot;结构关联两条线索：</p>
+<p><strong>Vision-SR1</strong> [2] 用推理分解（See-Think-Answer）实现自奖励：第一轮生成视觉描述 <span class="katex"><math xmlns="http://www.w3.org/1998/Math/MathML"><semantics><mrow><mi>c</mi></mrow><annotation encoding="application/x-tex">c</annotation></semantics></math></span>，第二轮去掉原图、仅用 <span class="katex"><math xmlns="http://www.w3.org/1998/Math/MathML"><semantics><mrow><mo stretchy="false">(</mo><mi>q</mi><mo separator="true">,</mo><mi>c</mi><mo stretchy="false">)</mo></mrow><annotation encoding="application/x-tex">(q, c)</annotation></semantics></math></span> 解题，用答案正确性反向监督 <span class="katex"><math xmlns="http://www.w3.org/1998/Math/MathML"><semantics><mrow><mi>c</mi></mrow><annotation encoding="application/x-tex">c</annotation></semantics></math></span> 质量。这与 DoGe 的 Stage 1 奖励设计高度相似（都用&quot;能否答对&quot;量化分析价值），区别在于 Vision-SR1 两轮 rollout 在优化上解耦（各自计算 z-score 优势与分项 KL），DoGe 把两阶段串联成迭代闭环。Vision-SR1 在 MMMU-Pro、MathVista 等任务上也报告提升，但同样存在&quot;<span class="katex"><math xmlns="http://www.w3.org/1998/Math/MathML"><semantics><mrow><msub><mi>r</mi><mtext>visual</mtext></msub></mrow><annotation encoding="application/x-tex">r_{\text{visual}}</annotation></semantics></math></span> 只衡量能否答对、不衡量是否忠实&quot;的归因问题。</p>
+<p><strong>VisPlay</strong> [3] 用 Questioner-Reasoner 双角色交替训练：Questioner 搜索能力边界（用不确定性奖励驱动出题），Reasoner 在自生成问题上训练（用伪标签匹配奖励）。两者来自同一基座、交替冻结，最终只用 Reasoner 权重评测。这与 DoGe 的&quot;Thinker 越强 → 下一轮 Solver 反馈越有判别力&quot;逻辑类似，都通过角色解耦维持训练稳定性。</p>
+<p>三者共同风险：当判分者、出题者、消费者是同一策略（或其冻结版本）时，自奖励信号易陷入自指循环——模型优化的是&quot;让自己满意的分析&quot;，而非&quot;客观上更准确的理解&quot;。</p>
+<h2>未验证的接缝</h2>
+<ol>
+<li><strong>Stage 1 独立贡献</strong>：论文应在 Stage 1 结束时保存 checkpoint，单独在 7 个 benchmark 上评测，拆分 Stage 1 与 Stage 2 的净效果。</li>
+<li><strong>Compute-matched 对照</strong>：给 naive GRPO 等量 rollout 预算，并在遮蔽输入上跑等步数 GRPO，检验熵提升来源。</li>
+<li><strong>奖励信号噪声与泄漏</strong>：统计 Stage 1 每 prompt 组内 <span class="katex"><math xmlns="http://www.w3.org/1998/Math/MathML"><semantics><mrow><mi>K</mi><mo>=</mo><mn>4</mn></mrow><annotation encoding="application/x-tex">K=4</annotation></semantics></math></span> 个 <span class="katex"><math xmlns="http://www.w3.org/1998/Math/MathML"><semantics><mrow><msub><mi>r</mi><mi>k</mi></msub></mrow><annotation encoding="application/x-tex">r_k</annotation></semantics></math></span> 的零方差比例（即 4 条分析得到完全相同奖励），并固定同一分析让 Solver 重复采样 4 次，估计奖励噪声。同时检测答案泄漏（Solver 只看分析不看原图的上界测试）。</li>
+<li><strong>合成数据可靠性</strong>：论文依赖硬标签 <span class="katex"><math xmlns="http://www.w3.org/1998/Math/MathML"><semantics><mrow><mi>y</mi></mrow><annotation encoding="application/x-tex">y</annotation></semantics></math></span> 计算奖励，但地球科学等域的问题可能由合成大模型自写答案。VisPlay 的伪标签准确率随迭代下降（72%→61%），DoGe 是否也存在错误累积？</li>
+</ol>
+<h2>适用边界</h2>
+<p>DoGe 的价值在于提供<strong>数据稀缺专业领域</strong>实现多轮自演化的可行路径，通过双阶段解耦降低对单次训练数据质量的敏感性（论文称&quot;Iter2 的低质量数据在基线中诱发 reward hacking，DoGe 更稳定&quot;）。适用场景：</p>
+<ul>
+<li>标注成本极高的多模态推理任务（化学、地球科学、医学影像）</li>
+<li>合成数据分布易收敛，需课程化难度管理</li>
+<li>愿投入多阶段训练与迭代数据合成的工程成本</li>
+</ul>
+<p>需注意：</p>
+<ul>
+<li><strong>增益幅度有限</strong>：消融显示解耦本身只贡献 0.8、0.1、0.3 分，主要收益可能来自数据管线与多阶段训练的算力投入。</li>
+<li><strong>机制验证不足</strong>：Stage 1 的独立效果、熵提升的因果归因、奖励信号的噪声与泄漏风险，都需补充实验确证。</li>
+<li><strong>计算开销高</strong>：每轮 Stage 1 需 16 次推理/题（4 条分析 × 4 次 Solver 调用），加 Stage 2 的 8 次采样，总 rollout 数是标准 GRPO 的数倍。</li>
+</ul>
+<hr>
+<p><strong>来源说明</strong><br>本文按 2026-09-20 与 2026-09-23 的阅读笔记整理，相关文献于 2026-10-13 补充核对。未做独立复现，所有实验数据与机制描述均基于论文报告。</p>
+<h2>References</h2>
+<p>[1] <a href="https://arxiv.org/abs/2512.06835">Decouple to Generalize: Context-First Self-Evolving Learning for Data-Scarce Vision-Language Reasoning</a></p>
+<p>[2] <a href="https://arxiv.org/abs/2508.19652">Self-Rewarding Vision-Language Model via Reasoning Decomposition</a></p>
+<p>[3] <a href="https://arxiv.org/abs/2511.15661">VisPlay: Self-Evolving Vision-Language Models</a></p>
+</div></article><div class="back"><a href="/blog/">← BACK TO NOTES</a></div></main></body></html>

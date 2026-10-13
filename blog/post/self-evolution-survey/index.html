@@ -1,0 +1,107 @@
+<!DOCTYPE html><html lang="zh-CN"><head><meta charset="utf-8"><meta name="viewport" content="width=device-width,initial-scale=1,maximum-scale=2"><meta http-equiv="X-UA-Compatible" content="IE=edge,chrome=1"><meta name="theme-color" content="#060606"><style>
+:root{--bg:#060606;--text:#b6b6b6;--text-dim:#4a4a50;--accent:#5f8de0;--border:#1a1a20}
+*{box-sizing:border-box;margin:0;padding:0}
+html{font-size:20px}
+body{background:var(--bg);color:var(--text);font-family:"Helvetica Neue","Microsoft Yahei",-apple-system,sans-serif;-webkit-font-smoothing:antialiased;line-height:1.9}
+canvas#grid{position:fixed;top:0;left:0;width:100%;height:100%;z-index:0;pointer-events:none;opacity:0.5}
+.container{position:relative;z-index:1;max-width:640px;margin:0 auto;padding:8vh 30px 80px}
+.header{margin-bottom:50px}
+.header h1{font-size:1.4rem;font-weight:300;color:#e8e8e8;letter-spacing:1px;margin-bottom:16px;line-height:1.5}
+.header .meta{font-size:0.65rem;color:var(--text-dim);letter-spacing:2px;display:flex;gap:10px;align-items:center}
+.header .meta .dot{width:4px;height:4px;background:#333;border-radius:50%}
+.tags{display:flex;gap:8px;margin-top:14px}
+.tags span{padding:2px 10px;border:1px solid var(--border);border-radius:12px;font-size:0.6rem;color:var(--text-dim);letter-spacing:1px}
+.article{font-size:0.82rem;color:#8a8a92;font-weight:300}
+.article h2{font-size:1.05rem;color:#c0c0c8;font-weight:400;margin:40px 0 16px;letter-spacing:1px}
+.article h3{font-size:0.9rem;color:#a8a8b0;font-weight:400;margin:32px 0 12px}
+.article p{margin-bottom:18px}
+.article b,.article strong{color:#b0b0b8;font-weight:400}
+.article code{color:#d2906e;font-size:0.75rem;background:rgba(255,255,255,0.04);padding:1px 6px;border-radius:3px}
+.article pre{background:rgba(255,255,255,0.03);border:1px solid var(--border);border-radius:6px;padding:14px 18px;overflow-x:auto;font-size:0.72rem;line-height:1.6;margin:16px 0;color:#9a9aa2}
+.article ul,.article ol{margin:12px 0 18px 20px}
+.article li{margin-bottom:8px}
+.article blockquote{border-left:2px solid var(--accent);margin:20px 0;padding:10px 20px;color:#6a6a74;font-style:italic}
+.article blockquote p{margin:0}
+.article hr{border:none;border-top:1px solid var(--border);margin:32px 0}
+.article a{color:var(--accent)}
+.article img{max-width:100%;border-radius:6px}
+.back{margin-top:60px}
+.back a{color:#333;font-size:0.7rem;letter-spacing:2px;text-decoration:none;transition:color .4s}
+.back a:hover{color:#666}
+.list-header{text-align:center;margin-bottom:80px}
+.list-header h1{font-size:2.4rem;font-weight:200;color:#f0f0f0;letter-spacing:4px;margin-bottom:12px}
+.list-header .sub{font-size:0.8rem;color:var(--text-dim);letter-spacing:2px;font-weight:300}
+.posts{list-style:none;display:flex;flex-direction:column;gap:32px}
+.post-item{padding:0 0 32px;border-bottom:1px solid var(--border);transition:border-color .4s}
+.post-item:last-child{border-bottom:none}
+.post-item:hover{border-color:#2a2a34}
+.post-title{font-size:1.1rem;font-weight:400;margin-bottom:6px;letter-spacing:.5px}
+.post-title a{color:#e0e0e0;text-decoration:none;transition:color .3s}
+.post-title a:hover{color:var(--accent)}
+.post-meta{font-size:0.65rem;color:var(--text-dim);letter-spacing:1px;margin-bottom:10px;display:flex;gap:10px;align-items:center}
+.post-desc{font-size:0.8rem;color:#6a6a72;line-height:1.9;font-weight:300}
+.tag{display:inline-block;padding:2px 10px;border:1px solid var(--border);border-radius:12px;font-size:0.6rem;color:var(--text-dim);letter-spacing:1px}
+@media(max-width:768px){.container{padding:5vh 20px 60px}.header h1,.list-header h1{font-size:1.2rem}}
+.thought-list{font-size:0.85rem;color:#8a8a92;line-height:2}
+.thought-list h1,.thought-list h2,.thought-list h3{margin:0 0 20px}
+.thought-list ol{counter-reset:t;list-style:none;padding:0}
+.thought-list ol>li{position:relative;padding:22px 0 22px 48px;border-bottom:1px solid var(--border);counter-increment:t;font-size:0.82rem;line-height:1.8}
+.thought-list ol>li:last-child{border-bottom:none}
+.thought-list ol>li:before{content:counter(t,decimal-leading-zero);position:absolute;left:0;top:22px;font-size:0.65rem;color:var(--text-dim);font-weight:300;letter-spacing:1px}
+.thought-list ol>li strong,.thought-list ol>li b{color:#b8b8c0;font-weight:400}
+.thought-list ol>li a{color:var(--accent);text-decoration:none;font-size:0.75rem}
+.thought-list ol>li a:hover{color:#80b0f0}
+.thought-list ol>li p{margin-bottom:8px}
+.thought-list ol>li ul,.thought-list ol>li ol{margin:6px 0;padding-left:16px}
+.thought-list ol>li ul li,.thought-list ol>li ol li{border:none;padding:2px 0;font-size:0.8rem}
+.thought-list ol>li ul li:before{content:none}
+</style><title>大语言模型自演化综述：循环框架与闭环缺口 · Auince</title><meta name="description" content="解读LLM自演化的四阶段循环设计、方法分类轴与评估挑战，对比STaR和Reflexion揭示闭环实现的关键差异"><link rel="canonical" href="https://auince.github.io/blog/post/self-evolution-survey/"><link rel="icon" href="/favicon.ico"><link rel="stylesheet" href="/css/blog.css"></head><body><main class="container blog-article"><nav class="site-nav" aria-label="文章导航"><a href="/blog/">← Notes</a><a href="/">Auince /</a></nav><article><header class="header"><p class="eyebrow">自进化</p><h1>大语言模型自演化综述：循环框架与闭环缺口</h1><div class="meta"><span>阅读于 <time datetime="2026-09-22">2026-09-22</time></span></div><div class="tags"><span>LLM</span><span>综述</span><span>反馈</span></div><p class="paper-source"><a href="https://arxiv.org/abs/2404.14387" target="_blank" rel="noopener noreferrer">A Survey on Self-Evolution of Large Language Models ↗</a></p></header><div class="article"><p>模型从自己的输出中学习并迭代改进，就进入了&quot;自演化&quot;状态。这个概念在大语言模型(LLM)领域正从零散的技术尝试走向系统化框架。2024年的综述论文 <em>A Survey on Self-Evolution of Large Language Models</em>[1] 提出四阶段循环作为统一视角，但笔记提出一个初步观察：不少被归入&quot;自演化&quot;的方法只覆盖了部分环节，没有形成真正的闭环。</p>
+<h2>四阶段循环</h2>
+<p>综述将自演化定义为四个连续阶段的迭代[1]：</p>
+<ol>
+<li><strong>经验获取</strong>(Experience Acquisition)：模型生成候选输出，可能配合任务分解、工具调用或多轮交互</li>
+<li><strong>经验精炼</strong>(Experience Refinement)：对生成内容过滤、纠错或增强，剔除低质量样本</li>
+<li><strong>模型更新</strong>(Model Updating)：用精炼后的数据更新模型权重或上下文记忆</li>
+<li><strong>评估</strong>(Evaluation)：检验更新后模型的能力变化，决定是否继续迭代</li>
+</ol>
+<h2>对照早期方法</h2>
+<p>将框架与早期工作对比，能看清&quot;自演化&quot;的边界在哪里。<strong>STaR</strong>(Self-Taught Reasoner)[2] 在2022年提出迭代生成推理链(rationale)、对答错的样本做答案条件重试、再用成功的推理链微调模型。流程覆盖获取、精炼(以正确答案为过滤条件)和更新(权重微调)三个阶段，反馈来源是ground truth答案匹配。</p>
+<p><strong>Reflexion</strong>[3] 走了另一条路：保持模型权重不变，将从外部或自我模拟得到的文本反馈存入情节记忆(episodic memory)，在后续试次中通过上下文引入这些反思。更新函数是 <span class="katex"><math xmlns="http://www.w3.org/1998/Math/MathML"><semantics><mrow><msub><mi>f</mi><mtext>context</mtext></msub></mrow><annotation encoding="application/x-tex">f_{\text{context}}</annotation></semantics></math></span> 而非 <span class="katex"><math xmlns="http://www.w3.org/1998/Math/MathML"><semantics><mrow><msub><mi>f</mi><mtext>weight</mtext></msub></mrow><annotation encoding="application/x-tex">f_{\text{weight}}</annotation></semantics></math></span>，反馈可以来自环境奖励或模型自评。</p>
+<p><strong>分析</strong>：监督信号的来源(ground truth、环境反馈、模型自评)和更新目标(权重 vs 上下文)是区分不同自演化路线的关键维度。STaR 依赖标注答案构成闭环，Reflexion 尝试用语言化反馈替代权重更新。两者在信息传递方式和推理预算分配上有本质差异：STaR 把改进固化到参数，Reflexion 在每次推理时重新加载历史经验。</p>
+<h2>部分环节的普遍性</h2>
+<p>综述的Table 1列出了多种方法在六个函数轴上的覆盖情况[1]。笔记中提到该表存在大量空白格，初步看来不少方法只实现了获取、精炼、更新中的部分环节，反馈列常缺。这引出定义问题：缺少持续评估与反馈，还算不算&quot;自演化&quot;？</p>
+<p>许多方法在单次迭代后就停止，或只在标注数据上做rejection sampling而不产生新任务。从功能看，它们更接近局部自训练而非真正的演化循环。综述作者将评估视为关键但研究不足的环节。</p>
+<h2>负样本演化的风险分化</h2>
+<p>综述区分了正向演化(从正确输出学习)和负向演化(从错误或对抗样本学习)[1]。负向路线中，对比式方法偏重性能指标，扰动式方法偏重安全性对齐。失败条件不同：对比式方法可能在分布外任务上过拟合自我偏好，扰动式方法需要防止模型学会绕过安全检测而非真正拒绝有害请求。</p>
+<p>将两类方法放在同一&quot;负向演化&quot;类别下时，要明确评价目标的差异。对比式方法关注准确率、推理步数，扰动式方法关注拒绝率、对抗鲁棒性。跨类比较容易误导——一个方法在性能上&quot;演化成功&quot;，可能伴随安全指标的静默退化。</p>
+<h2>证据边界</h2>
+<p>综述在§7讨论评估方法，但笔记明确指出材料在§7.2后截断，§8的开放挑战与未来方向不可读，当时的外部检索也未返回该文内容[1]。对评估细节、完整的方法覆盖表、以及作者总结的研究空白的讨论都基于不完整的证据。</p>
+<p>可以确认：</p>
+<ul>
+<li>综述提出四阶段循环和六函数分类轴作为组织框架</li>
+<li>据可见部分，部分方法未闭合全部四个阶段</li>
+<li>评估环节被识别为薄弱点，但具体评估方法的分类和对比不在已读范围</li>
+</ul>
+<p>无法确认：</p>
+<ul>
+<li>§8 可能提出的开放挑战(如多模态自演化、无真值环境下的反馈设计)</li>
+<li>完整Table 1 的统计特征(各阶段方法数量分布)</li>
+<li>作者对&quot;自演化&quot;与&quot;自训练&quot;边界的明确定义</li>
+</ul>
+<h2>待检验的方向</h2>
+<p>从已有线索可以提出几个可验证假设：</p>
+<ol>
+<li><strong>闭环必要性</strong>：一个方法只做单次rejection fine-tuning而无持续评估，在多样化任务上的泛化能力是否劣于真正的循环系统？</li>
+<li><strong>评估信号独立性</strong>：评估模块与策略模型共享参数或训练数据时，会否产生&quot;自我确认偏差&quot;，使模型对自己擅长的模式过度自信？</li>
+<li><strong>上下文 vs 权重更新的长期效应</strong>：Reflexion式的记忆积累在迭代次数增加后会遇到上下文长度瓶颈，此时改进曲线是否平台化？权重更新方法能否继续提升？</li>
+</ol>
+<p>这些问题需要在相同任务、相同基座模型上做对照实验，不能仅从方法描述推导因果。</p>
+<h2>小结</h2>
+<p>自演化综述用统一框架整理分散的迭代训练方法，四阶段循环和六函数轴为方法对比提供了结构化视角。但从Table 1的空白格和评估环节的研究不足可以看出，笔记提示不少工作仍是部分环节的自训练，完整分布还需逐项核验。</p>
+<p>对比STaR和Reflexion这类经典方法，监督来源(ground truth、环境、自评)、更新目标(权重、上下文)、信息传递方式、推理预算分配是理解自演化设计的关键维度。负向演化的风险与指标因对比式和扰动式路线而异，不宜简单归并。评估模块既是循环的终点也是下一轮起点，它的设计直接影响演化的方向与稳定性。</p>
+<p>本文依据2026-09-22的阅读笔记整理，相关文献于2026-10-13补充核对，未做独立复现。综述后续章节(§7.2之后)与完整的开放挑战讨论不在已读材料中，上述分析仅基于可见证据。</p>
+<h2>参考文献</h2>
+<p>[1] <a href="https://arxiv.org/abs/2404.14387">A Survey on Self-Evolution of Large Language Models</a></p>
+<p>[2] <a href="https://arxiv.org/abs/2203.14465">STaR: Bootstrapping Reasoning With Reasoning</a></p>
+<p>[3] <a href="https://arxiv.org/abs/2303.11366">Reflexion: Language Agents with Verbal Reinforcement Learning</a></p>
+</div></article><div class="back"><a href="/blog/">← BACK TO NOTES</a></div></main></body></html>

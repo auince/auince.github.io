@@ -1,0 +1,97 @@
+<!DOCTYPE html><html lang="zh-CN"><head><meta charset="utf-8"><meta name="viewport" content="width=device-width,initial-scale=1,maximum-scale=2"><meta http-equiv="X-UA-Compatible" content="IE=edge,chrome=1"><meta name="theme-color" content="#060606"><style>
+:root{--bg:#060606;--text:#b6b6b6;--text-dim:#4a4a50;--accent:#5f8de0;--border:#1a1a20}
+*{box-sizing:border-box;margin:0;padding:0}
+html{font-size:20px}
+body{background:var(--bg);color:var(--text);font-family:"Helvetica Neue","Microsoft Yahei",-apple-system,sans-serif;-webkit-font-smoothing:antialiased;line-height:1.9}
+canvas#grid{position:fixed;top:0;left:0;width:100%;height:100%;z-index:0;pointer-events:none;opacity:0.5}
+.container{position:relative;z-index:1;max-width:640px;margin:0 auto;padding:8vh 30px 80px}
+.header{margin-bottom:50px}
+.header h1{font-size:1.4rem;font-weight:300;color:#e8e8e8;letter-spacing:1px;margin-bottom:16px;line-height:1.5}
+.header .meta{font-size:0.65rem;color:var(--text-dim);letter-spacing:2px;display:flex;gap:10px;align-items:center}
+.header .meta .dot{width:4px;height:4px;background:#333;border-radius:50%}
+.tags{display:flex;gap:8px;margin-top:14px}
+.tags span{padding:2px 10px;border:1px solid var(--border);border-radius:12px;font-size:0.6rem;color:var(--text-dim);letter-spacing:1px}
+.article{font-size:0.82rem;color:#8a8a92;font-weight:300}
+.article h2{font-size:1.05rem;color:#c0c0c8;font-weight:400;margin:40px 0 16px;letter-spacing:1px}
+.article h3{font-size:0.9rem;color:#a8a8b0;font-weight:400;margin:32px 0 12px}
+.article p{margin-bottom:18px}
+.article b,.article strong{color:#b0b0b8;font-weight:400}
+.article code{color:#d2906e;font-size:0.75rem;background:rgba(255,255,255,0.04);padding:1px 6px;border-radius:3px}
+.article pre{background:rgba(255,255,255,0.03);border:1px solid var(--border);border-radius:6px;padding:14px 18px;overflow-x:auto;font-size:0.72rem;line-height:1.6;margin:16px 0;color:#9a9aa2}
+.article ul,.article ol{margin:12px 0 18px 20px}
+.article li{margin-bottom:8px}
+.article blockquote{border-left:2px solid var(--accent);margin:20px 0;padding:10px 20px;color:#6a6a74;font-style:italic}
+.article blockquote p{margin:0}
+.article hr{border:none;border-top:1px solid var(--border);margin:32px 0}
+.article a{color:var(--accent)}
+.article img{max-width:100%;border-radius:6px}
+.back{margin-top:60px}
+.back a{color:#333;font-size:0.7rem;letter-spacing:2px;text-decoration:none;transition:color .4s}
+.back a:hover{color:#666}
+.list-header{text-align:center;margin-bottom:80px}
+.list-header h1{font-size:2.4rem;font-weight:200;color:#f0f0f0;letter-spacing:4px;margin-bottom:12px}
+.list-header .sub{font-size:0.8rem;color:var(--text-dim);letter-spacing:2px;font-weight:300}
+.posts{list-style:none;display:flex;flex-direction:column;gap:32px}
+.post-item{padding:0 0 32px;border-bottom:1px solid var(--border);transition:border-color .4s}
+.post-item:last-child{border-bottom:none}
+.post-item:hover{border-color:#2a2a34}
+.post-title{font-size:1.1rem;font-weight:400;margin-bottom:6px;letter-spacing:.5px}
+.post-title a{color:#e0e0e0;text-decoration:none;transition:color .3s}
+.post-title a:hover{color:var(--accent)}
+.post-meta{font-size:0.65rem;color:var(--text-dim);letter-spacing:1px;margin-bottom:10px;display:flex;gap:10px;align-items:center}
+.post-desc{font-size:0.8rem;color:#6a6a72;line-height:1.9;font-weight:300}
+.tag{display:inline-block;padding:2px 10px;border:1px solid var(--border);border-radius:12px;font-size:0.6rem;color:var(--text-dim);letter-spacing:1px}
+@media(max-width:768px){.container{padding:5vh 20px 60px}.header h1,.list-header h1{font-size:1.2rem}}
+.thought-list{font-size:0.85rem;color:#8a8a92;line-height:2}
+.thought-list h1,.thought-list h2,.thought-list h3{margin:0 0 20px}
+.thought-list ol{counter-reset:t;list-style:none;padding:0}
+.thought-list ol>li{position:relative;padding:22px 0 22px 48px;border-bottom:1px solid var(--border);counter-increment:t;font-size:0.82rem;line-height:1.8}
+.thought-list ol>li:last-child{border-bottom:none}
+.thought-list ol>li:before{content:counter(t,decimal-leading-zero);position:absolute;left:0;top:22px;font-size:0.65rem;color:var(--text-dim);font-weight:300;letter-spacing:1px}
+.thought-list ol>li strong,.thought-list ol>li b{color:#b8b8c0;font-weight:400}
+.thought-list ol>li a{color:var(--accent);text-decoration:none;font-size:0.75rem}
+.thought-list ol>li a:hover{color:#80b0f0}
+.thought-list ol>li p{margin-bottom:8px}
+.thought-list ol>li ul,.thought-list ol>li ol{margin:6px 0;padding-left:16px}
+.thought-list ol>li ul li,.thought-list ol>li ol li{border:none;padding:2px 0;font-size:0.8rem}
+.thought-list ol>li ul li:before{content:none}
+</style><title>视觉自奖励：分解推理能否绕过标注瓶颈 · Auince</title><meta name="description" content="Vision-SR1 用两轮 rollout 把视觉理解与答案生成拆开训练，试图让 VLM 自己给自己的视觉描述打分——但这套机制真的在奖励&#39;看得准&#39;，还是只奖励&#39;猜得对&#39;？"><link rel="canonical" href="https://auince.github.io/blog/post/vision-sr1/"><link rel="icon" href="/favicon.ico"><link rel="stylesheet" href="/css/blog.css"></head><body><main class="container blog-article"><nav class="site-nav" aria-label="文章导航"><a href="/blog/">← Notes</a><a href="/">Auince /</a></nav><article><header class="header"><p class="eyebrow">自进化</p><h1>视觉自奖励：分解推理能否绕过标注瓶颈</h1><div class="meta"><span>阅读于 <time datetime="2026-09-22">2026-09-22</time></span></div><div class="tags"><span>VLM</span><span>自奖励</span><span>视觉推理</span></div><p class="paper-source"><a href="https://arxiv.org/abs/2508.19652" target="_blank" rel="noopener noreferrer">Self-Rewarding Vision-Language Model via Reasoning Decomposition ↗</a></p></header><div class="article"><p>视觉语言模型(VLM)的后训练长期受困于标注成本：给图像标注高质量推理过程代价极高，合成数据又容易让模型学会文本捷径——看都不看图就根据问题猜答案。Self-Rewarding Vision-Language Model via Reasoning Decomposition(以下简称 Vision-SR1)[1] 提出把推理拆成&quot;看图描述&quot;与&quot;根据描述答题&quot;两步，让模型用第二步的答对率反向评价第一步描述的质量，形成无需逐段人工标注视觉描述的自奖励信号。它试图把监督信号从&quot;答案正确性&quot;前移到&quot;视觉理解质量&quot;，且不依赖外部奖励模型。</p>
+<p>但这套机制真的在训练&quot;看得准&quot;吗？我在阅读时发现，Vision-SR1 的视觉奖励 <span class="katex"><math xmlns="http://www.w3.org/1998/Math/MathML"><semantics><mrow><msub><mi>r</mi><mtext>visual</mtext></msub></mrow><annotation encoding="application/x-tex">r_{\text{visual}}</annotation></semantics></math></span> 实际衡量的是&quot;由描述 <span class="katex"><math xmlns="http://www.w3.org/1998/Math/MathML"><semantics><mrow><mi>c</mi></mrow><annotation encoding="application/x-tex">c</annotation></semantics></math></span> 能否推出正确答案&quot;，而非&quot;<span class="katex"><math xmlns="http://www.w3.org/1998/Math/MathML"><semantics><mrow><mi>c</mi></mrow><annotation encoding="application/x-tex">c</annotation></semantics></math></span> 是否忠实于图像&quot;——一个描述错了图像内容、却恰好能推出正确答案的 <span class="katex"><math xmlns="http://www.w3.org/1998/Math/MathML"><semantics><mrow><mi>c</mi></mrow><annotation encoding="application/x-tex">c</annotation></semantics></math></span> 会被判为高质量。方法上自洽，解释上容易误导。本文按阅读笔记(2026-09-22)整理 Vision-SR1 的核心机制、实验结果与复现缺口，并结合相关工作分析设计选择。</p>
+<h2>两轮 rollout 与自足性判据</h2>
+<p>Vision-SR1 的训练流程建立在两次 rollout 之上，每次生成不同输出、接受不同输入、用不同奖励函数评价。</p>
+<p><strong>第一轮 rollout(带图)</strong>：模型看到图像 <span class="katex"><math xmlns="http://www.w3.org/1998/Math/MathML"><semantics><mrow><mi>I</mi></mrow><annotation encoding="application/x-tex">I</annotation></semantics></math></span> 与问题 <span class="katex"><math xmlns="http://www.w3.org/1998/Math/MathML"><semantics><mrow><mi>q</mi></mrow><annotation encoding="application/x-tex">q</annotation></semantics></math></span>，按模板输出三段内容，用特殊分隔符 <span class="katex"><math xmlns="http://www.w3.org/1998/Math/MathML"><semantics><mrow><mi mathvariant="normal">∥</mi></mrow><annotation encoding="application/x-tex">\|</annotation></semantics></math></span> 隔开：</p>
+<div class="math-scroll" tabindex="0" aria-label="可横向滚动的公式"><span class="katex"><math xmlns="http://www.w3.org/1998/Math/MathML" display="block"><semantics><mrow><mtext>Visual Reasoning: </mtext><mi>c</mi><mi mathvariant="normal">∥</mi><mtext> Think: </mtext><mi>t</mi><mi mathvariant="normal">∥</mi><mtext> Answer: </mtext><mi>a</mi></mrow><annotation encoding="application/x-tex">\text{Visual Reasoning: } c \| \text{ Think: } t \| \text{ Answer: } a</annotation></semantics></math></span></div>
+<p><span class="katex"><math xmlns="http://www.w3.org/1998/Math/MathML"><semantics><mrow><mi>c</mi></mrow><annotation encoding="application/x-tex">c</annotation></semantics></math></span> 是对图像的视觉描述(论文中称为 visual reasoning 或 caption)，<span class="katex"><math xmlns="http://www.w3.org/1998/Math/MathML"><semantics><mrow><mi>t</mi></mrow><annotation encoding="application/x-tex">t</annotation></semantics></math></span> 是推理步骤，<span class="katex"><math xmlns="http://www.w3.org/1998/Math/MathML"><semantics><mrow><mi>a</mi></mrow><annotation encoding="application/x-tex">a</annotation></semantics></math></span> 是答案。三段都由同一个策略 <span class="katex"><math xmlns="http://www.w3.org/1998/Math/MathML"><semantics><mrow><msub><mi>π</mi><mi>θ</mi></msub></mrow><annotation encoding="application/x-tex">\pi_\theta</annotation></semantics></math></span> 在同一次 rollout中生成。</p>
+<p><strong>第二轮 rollout(无图)</strong>：模型只看到问题 <span class="katex"><math xmlns="http://www.w3.org/1998/Math/MathML"><semantics><mrow><mi>q</mi></mrow><annotation encoding="application/x-tex">q</annotation></semantics></math></span> 与第一轮生成的描述 <span class="katex"><math xmlns="http://www.w3.org/1998/Math/MathML"><semantics><mrow><mi>c</mi></mrow><annotation encoding="application/x-tex">c</annotation></semantics></math></span>，不再看原始图像，输出两段：</p>
+<div class="math-scroll" tabindex="0" aria-label="可横向滚动的公式"><span class="katex"><math xmlns="http://www.w3.org/1998/Math/MathML" display="block"><semantics><mrow><mtext>Think: </mtext><msup><mi>t</mi><mo mathvariant="normal" lspace="0em" rspace="0em">′</mo></msup><mi mathvariant="normal">∥</mi><mtext> Answer: </mtext><msup><mi>a</mi><mo mathvariant="normal" lspace="0em" rspace="0em">′</mo></msup></mrow><annotation encoding="application/x-tex">\text{Think: } t&#x27; \| \text{ Answer: } a&#x27;</annotation></semantics></math></span></div>
+<p><span class="katex"><math xmlns="http://www.w3.org/1998/Math/MathML"><semantics><mrow><mi>c</mi></mrow><annotation encoding="application/x-tex">c</annotation></semantics></math></span> 作为纯文本提示传入，图像被完全移除。论文称这是为了检验&quot;self-sufficiency&quot;——描述本身是否足以支撑推理。</p>
+<p><strong>奖励解耦</strong>：两轮 rollout 各自计算奖励，但优化目标分离。<span class="katex"><math xmlns="http://www.w3.org/1998/Math/MathML"><semantics><mrow><msub><mi>r</mi><mtext>visual</mtext></msub><mo>=</mo><mn mathvariant="double-struck">1</mn><mo stretchy="false">[</mo><msup><mi>a</mi><mo mathvariant="normal" lspace="0em" rspace="0em">′</mo></msup><mo>=</mo><mi>y</mi><mo stretchy="false">]</mo></mrow><annotation encoding="application/x-tex">r_{\text{visual}} = \mathbb{1}[a&#x27; = y]</annotation></semantics></math></span> 看第二轮答案是否正确，用于评价第一轮的 <span class="katex"><math xmlns="http://www.w3.org/1998/Math/MathML"><semantics><mrow><mi>c</mi></mrow><annotation encoding="application/x-tex">c</annotation></semantics></math></span>；<span class="katex"><math xmlns="http://www.w3.org/1998/Math/MathML"><semantics><mrow><msub><mi>r</mi><mtext>answer</mtext></msub><mo>=</mo><mn mathvariant="double-struck">1</mn><mo stretchy="false">[</mo><mi>a</mi><mo>=</mo><mi>y</mi><mo stretchy="false">]</mo></mrow><annotation encoding="application/x-tex">r_{\text{answer}} = \mathbb{1}[a = y]</annotation></semantics></math></span> 看第一轮答案是否正确，对应第一轮答案奖励。每个奖励在各自 rollout 组内做 z-score 标准化得到优势 <span class="katex"><math xmlns="http://www.w3.org/1998/Math/MathML"><semantics><mrow><mi>A</mi></mrow><annotation encoding="application/x-tex">A</annotation></semantics></math></span>，分别计算 KL 正则项，最后合并梯度更新同一组参数 <span class="katex"><math xmlns="http://www.w3.org/1998/Math/MathML"><semantics><mrow><mi>θ</mi></mrow><annotation encoding="application/x-tex">\theta</annotation></semantics></math></span>。</p>
+<p>解耦的动机是避免视觉奖励与答案奖励在同一个采样池中相互干扰：如果一个样本的 <span class="katex"><math xmlns="http://www.w3.org/1998/Math/MathML"><semantics><mrow><mi>c</mi></mrow><annotation encoding="application/x-tex">c</annotation></semantics></math></span> 很差但 <span class="katex"><math xmlns="http://www.w3.org/1998/Math/MathML"><semantics><mrow><mi>a</mi></mrow><annotation encoding="application/x-tex">a</annotation></semantics></math></span> 碰巧对了，混在一起算优势会让模型搞不清到底在奖励什么。</p>
+<h2>与相关工作的对比</h2>
+<p><strong>GRPO 优化算法</strong>：DeepSeekMath [2] 提出 GRPO(Group Relative Policy Optimization)，是 PPO 的低显存变体，用组内优势替代价值网络。Vision-SR1 的优化算法就是 GRPO，这部分不是贡献。它的增量在于奖励信号的构造：不依赖外部奖励模型，而是用&quot;能否无图答对&quot;这个自足性判据反向评价描述质量。</p>
+<p>理论吸引力是：如果第二轮模型&quot;看不到图、只能靠描述答题&quot;，那么能让它答对的描述，理应抓住了图像的关键信息。但实际效果取决于第二轮模型的能力——如果它本身就善于从不完整信息中猜答案，这个判据就会变松。</p>
+<p><strong>自奖励与同源判分</strong>：自奖励(self-rewarding)通常指模型自己给自己的输出打分。Vision-SR1 的&quot;自&quot;体现在：判分者与被训练策略是同一组参数(至少在论文描述中如此，脚注提到两次 rollout 期间策略冻结，但未说明判分时是否用不同 checkpoint)。这与让一个更强的外部模型(如 GPT-4)打分不同，好处是不依赖闭源 API，坏处是判分质量受限于当前策略的推理能力，可能产生自我强化的偏差。</p>
+<p><strong>Vision-SR1</strong> [1] 用推理分解（See-Think-Answer）实现自奖励：第一轮生成视觉描述 <span class="katex"><math xmlns="http://www.w3.org/1998/Math/MathML"><semantics><mrow><mi>c</mi></mrow><annotation encoding="application/x-tex">c</annotation></semantics></math></span>，第二轮去掉原图、仅用 <span class="katex"><math xmlns="http://www.w3.org/1998/Math/MathML"><semantics><mrow><mo stretchy="false">(</mo><mi>q</mi><mo separator="true">,</mo><mi>c</mi><mo stretchy="false">)</mo></mrow><annotation encoding="application/x-tex">(q, c)</annotation></semantics></math></span> 解题，用答案正确性反向监督 <span class="katex"><math xmlns="http://www.w3.org/1998/Math/MathML"><semantics><mrow><mi>c</mi></mrow><annotation encoding="application/x-tex">c</annotation></semantics></math></span> 质量。这与 DoGe [3] 的 Stage 1 奖励设计高度相似（都用&quot;能否答对&quot;量化分析价值），区别在于 Vision-SR1 两轮 rollout 在优化上解耦（各自计算 z-score 优势与分项 KL），DoGe 把两阶段串联成迭代闭环。Vision-SR1 在 MMMU-Pro、MathVista 等任务上也报告提升，但同样存在&quot;<span class="katex"><math xmlns="http://www.w3.org/1998/Math/MathML"><semantics><mrow><msub><mi>r</mi><mtext>visual</mtext></msub></mrow><annotation encoding="application/x-tex">r_{\text{visual}}</annotation></semantics></math></span> 只衡量能否答对、不衡量是否忠实&quot;的归因问题。</p>
+<h2>实验结果与复现缺口</h2>
+<p>论文在多个 benchmark 上测试了 Qwen2.5-VL 7B 与 3B 版本：报告平均分与 HallusionBench 表现上升、LSR 下降。论文承认多模态数学任务上的部分提升可能来自 spurious effect，未做独立因果验证。</p>
+<p>我在阅读笔记中整理了几个未解细节：</p>
+<ol>
+<li><strong>第二轮输入的确切格式</strong>：<span class="katex"><math xmlns="http://www.w3.org/1998/Math/MathML"><semantics><mrow><mi>c</mi></mrow><annotation encoding="application/x-tex">c</annotation></semantics></math></span> 是带标签(&quot;Visual Reasoning: ...&quot;)传入，还是只传标签内的文本？是否保留图像占位符？论文正文未明确，称附录会给 prompt 模板，但我未见到附录。</li>
+<li><strong>两轮 rollout 的参数状态</strong>：论文 §2.2 称&quot;用 policy 自身推理能力自评&quot;，脚注又称&quot;两次 rollout 期间 policy 冻结&quot;，具体参数状态仍需结合实现核对。</li>
+<li><strong>命名与系数不一致</strong>：同一个 <span class="katex"><math xmlns="http://www.w3.org/1998/Math/MathML"><semantics><mrow><mi>c</mi></mrow><annotation encoding="application/x-tex">c</annotation></semantics></math></span> 在不同段落被称为 visual perception / visual reasoning / caption，KL 系数在公式中写作 <span class="katex"><math xmlns="http://www.w3.org/1998/Math/MathML"><semantics><mrow><msub><mi>β</mi><mtext>cap</mtext></msub></mrow><annotation encoding="application/x-tex">\beta_{\text{cap}}</annotation></semantics></math></span> 与 <span class="katex"><math xmlns="http://www.w3.org/1998/Math/MathML"><semantics><mrow><msub><mi>β</mi><mtext>visual</mtext></msub></mrow><annotation encoding="application/x-tex">\beta_{\text{visual}}</annotation></semantics></math></span>，指代关系需要读者自己对齐。</li>
+</ol>
+<h2>待检验的设计假设</h2>
+<p><strong>自足性判据与视觉忠实性</strong>：<span class="katex"><math xmlns="http://www.w3.org/1998/Math/MathML"><semantics><mrow><msub><mi>r</mi><mtext>visual</mtext></msub></mrow><annotation encoding="application/x-tex">r_{\text{visual}}</annotation></semantics></math></span> 奖励&quot;能答对&quot;，不直接奖励&quot;描述准确&quot;。如果存在一类任务，其中错误描述也能稳定推出正确答案(比如问题本身有强提示、或模型善于从矛盾信息中自我纠正)，这个判据就会失效。论文未提供&quot;描述质量&quot;与&quot;答对率&quot;的相关性分析，也未检测 <span class="katex"><math xmlns="http://www.w3.org/1998/Math/MathML"><semantics><mrow><mi>c</mi></mrow><annotation encoding="application/x-tex">c</annotation></semantics></math></span> 中的答案泄漏。</p>
+<p><strong>同源判分的自我强化偏差</strong>：当判分者与策略共享参数时，模型可能学会生成&quot;自己觉得好、但客观上有问题&quot;的输出。</p>
+<h2>奖励设计的权衡</h2>
+<p>Vision-SR1 的核心贡献是把&quot;视觉理解质量&quot;操作化为一个可自动计算的奖励信号，无需逐段标注视觉描述或外部奖励模型，但仍依赖答案真值。这在工程上很有价值，尤其对于数据稀缺领域。但设计选择也带来了固有限制：</p>
+<p>它真正奖励的是&quot;有用的描述&quot;，而非&quot;准确的描述&quot;。这两者大多数时候重叠，但在边界情况下会分离。如果训练目标是减少幻觉，可能需要额外的忠实性约束(比如让第三个模型检查 <span class="katex"><math xmlns="http://www.w3.org/1998/Math/MathML"><semantics><mrow><mi>c</mi></mrow><annotation encoding="application/x-tex">c</annotation></semantics></math></span> 与图像的一致性，或在奖励中加入&quot;不重复问题关键词&quot;的惩罚项)。</p>
+<p>第二轮模型的推理能力决定了 <span class="katex"><math xmlns="http://www.w3.org/1998/Math/MathML"><semantics><mrow><msub><mi>r</mi><mtext>visual</mtext></msub></mrow><annotation encoding="application/x-tex">r_{\text{visual}}</annotation></semantics></math></span> 的区分度。如果它本身就容易被误导，或者对描述质量不敏感，这个信号就会变得嘈杂。论文未报告第二轮 rollout 在不同质量 <span class="katex"><math xmlns="http://www.w3.org/1998/Math/MathML"><semantics><mrow><mi>c</mi></mrow><annotation encoding="application/x-tex">c</annotation></semantics></math></span> 下的答对率分布，无法判断这个问题是否存在。</p>
+<p>关键实现细节的缺失(prompt 模板、参数状态、输入格式)会让其他研究者难以验证结果、或在此基础上改进。如果这些细节最终开源，会大幅提升这项工作的影响力。</p>
+<h2>来源说明</h2>
+<p>本文基于 2026-09-22 的阅读笔记整理，参考文献于 2026-10-13 补充核对。笔记中的疑问与推测部分保留为&quot;我的思考&quot;或&quot;待检验假设&quot;，未做独立实验复现。对于论文自述的&quot;可能存在 spurious effect&quot;等限制，本文如实记录。</p>
+<h2>References</h2>
+<p>[1] <a href="https://arxiv.org/abs/2508.19652">Self-Rewarding Vision-Language Model via Reasoning Decomposition</a></p>
+<p>[2] <a href="https://arxiv.org/abs/2402.03300">DeepSeekMath: Pushing the Limits of Mathematical Reasoning in Open Language Models</a></p>
+<p>[3] <a href="https://arxiv.org/abs/2512.06835">Decouple to Generalize: Context-First Self-Evolving Learning for Data-Scarce Vision-Language Reasoning</a></p>
+</div></article><div class="back"><a href="/blog/">← BACK TO NOTES</a></div></main></body></html>

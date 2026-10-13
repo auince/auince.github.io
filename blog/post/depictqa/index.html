@@ -1,0 +1,91 @@
+<!DOCTYPE html><html lang="zh-CN"><head><meta charset="utf-8"><meta name="viewport" content="width=device-width,initial-scale=1,maximum-scale=2"><meta http-equiv="X-UA-Compatible" content="IE=edge,chrome=1"><meta name="theme-color" content="#060606"><style>
+:root{--bg:#060606;--text:#b6b6b6;--text-dim:#4a4a50;--accent:#5f8de0;--border:#1a1a20}
+*{box-sizing:border-box;margin:0;padding:0}
+html{font-size:20px}
+body{background:var(--bg);color:var(--text);font-family:"Helvetica Neue","Microsoft Yahei",-apple-system,sans-serif;-webkit-font-smoothing:antialiased;line-height:1.9}
+canvas#grid{position:fixed;top:0;left:0;width:100%;height:100%;z-index:0;pointer-events:none;opacity:0.5}
+.container{position:relative;z-index:1;max-width:640px;margin:0 auto;padding:8vh 30px 80px}
+.header{margin-bottom:50px}
+.header h1{font-size:1.4rem;font-weight:300;color:#e8e8e8;letter-spacing:1px;margin-bottom:16px;line-height:1.5}
+.header .meta{font-size:0.65rem;color:var(--text-dim);letter-spacing:2px;display:flex;gap:10px;align-items:center}
+.header .meta .dot{width:4px;height:4px;background:#333;border-radius:50%}
+.tags{display:flex;gap:8px;margin-top:14px}
+.tags span{padding:2px 10px;border:1px solid var(--border);border-radius:12px;font-size:0.6rem;color:var(--text-dim);letter-spacing:1px}
+.article{font-size:0.82rem;color:#8a8a92;font-weight:300}
+.article h2{font-size:1.05rem;color:#c0c0c8;font-weight:400;margin:40px 0 16px;letter-spacing:1px}
+.article h3{font-size:0.9rem;color:#a8a8b0;font-weight:400;margin:32px 0 12px}
+.article p{margin-bottom:18px}
+.article b,.article strong{color:#b0b0b8;font-weight:400}
+.article code{color:#d2906e;font-size:0.75rem;background:rgba(255,255,255,0.04);padding:1px 6px;border-radius:3px}
+.article pre{background:rgba(255,255,255,0.03);border:1px solid var(--border);border-radius:6px;padding:14px 18px;overflow-x:auto;font-size:0.72rem;line-height:1.6;margin:16px 0;color:#9a9aa2}
+.article ul,.article ol{margin:12px 0 18px 20px}
+.article li{margin-bottom:8px}
+.article blockquote{border-left:2px solid var(--accent);margin:20px 0;padding:10px 20px;color:#6a6a74;font-style:italic}
+.article blockquote p{margin:0}
+.article hr{border:none;border-top:1px solid var(--border);margin:32px 0}
+.article a{color:var(--accent)}
+.article img{max-width:100%;border-radius:6px}
+.back{margin-top:60px}
+.back a{color:#333;font-size:0.7rem;letter-spacing:2px;text-decoration:none;transition:color .4s}
+.back a:hover{color:#666}
+.list-header{text-align:center;margin-bottom:80px}
+.list-header h1{font-size:2.4rem;font-weight:200;color:#f0f0f0;letter-spacing:4px;margin-bottom:12px}
+.list-header .sub{font-size:0.8rem;color:var(--text-dim);letter-spacing:2px;font-weight:300}
+.posts{list-style:none;display:flex;flex-direction:column;gap:32px}
+.post-item{padding:0 0 32px;border-bottom:1px solid var(--border);transition:border-color .4s}
+.post-item:last-child{border-bottom:none}
+.post-item:hover{border-color:#2a2a34}
+.post-title{font-size:1.1rem;font-weight:400;margin-bottom:6px;letter-spacing:.5px}
+.post-title a{color:#e0e0e0;text-decoration:none;transition:color .3s}
+.post-title a:hover{color:var(--accent)}
+.post-meta{font-size:0.65rem;color:var(--text-dim);letter-spacing:1px;margin-bottom:10px;display:flex;gap:10px;align-items:center}
+.post-desc{font-size:0.8rem;color:#6a6a72;line-height:1.9;font-weight:300}
+.tag{display:inline-block;padding:2px 10px;border:1px solid var(--border);border-radius:12px;font-size:0.6rem;color:var(--text-dim);letter-spacing:1px}
+@media(max-width:768px){.container{padding:5vh 20px 60px}.header h1,.list-header h1{font-size:1.2rem}}
+.thought-list{font-size:0.85rem;color:#8a8a92;line-height:2}
+.thought-list h1,.thought-list h2,.thought-list h3{margin:0 0 20px}
+.thought-list ol{counter-reset:t;list-style:none;padding:0}
+.thought-list ol>li{position:relative;padding:22px 0 22px 48px;border-bottom:1px solid var(--border);counter-increment:t;font-size:0.82rem;line-height:1.8}
+.thought-list ol>li:last-child{border-bottom:none}
+.thought-list ol>li:before{content:counter(t,decimal-leading-zero);position:absolute;left:0;top:22px;font-size:0.65rem;color:var(--text-dim);font-weight:300;letter-spacing:1px}
+.thought-list ol>li strong,.thought-list ol>li b{color:#b8b8c0;font-weight:400}
+.thought-list ol>li a{color:var(--accent);text-decoration:none;font-size:0.75rem}
+.thought-list ol>li a:hover{color:#80b0f0}
+.thought-list ol>li p{margin-bottom:8px}
+.thought-list ol>li ul,.thought-list ol>li ol{margin:6px 0;padding-left:16px}
+.thought-list ol>li ul li,.thought-list ol>li ol li{border:none;padding:2px 0;font-size:0.8rem}
+.thought-list ol>li ul li:before{content:none}
+</style><title>超越分数：DepictQA 的语言化图像质量评估 · Auince</title><meta name="description" content="DepictQA 将图像质量评估从单一分数转向描述、比较与推理的层次化任务，通过多模态语言模型在 BAPPS 上接近人类表现，并展示了无参考场景下的有效性。"><link rel="canonical" href="https://auince.github.io/blog/post/depictqa/"><link rel="icon" href="/favicon.ico"><link rel="stylesheet" href="/css/blog.css"></head><body><main class="container blog-article"><nav class="site-nav" aria-label="文章导航"><a href="/blog/">← Notes</a><a href="/">Auince /</a></nav><article><header class="header"><p class="eyebrow">视觉质量</p><h1>超越分数：DepictQA 的语言化图像质量评估</h1><div class="meta"><span>阅读于 <time datetime="2026-07-25">2026-07-25</time></span></div><div class="tags"><span>IQA</span><span>可解释性</span><span>多模态</span></div><p class="paper-source"><a href="https://arxiv.org/abs/2312.08962" target="_blank" rel="noopener noreferrer">Depicting Beyond Scores: Advancing Image Quality Assessment through Multi-modal Language Models ↗</a></p></header><div class="article"><p>图像质量评估（Image Quality Assessment, IQA）长期依赖单一数值分数来表达质量判断。当面对未对齐的图像或多重失真类型时，这种简化的表示往往与人类的实际判断产生偏差。DepictQA [1] 提出将质量评估重构为语言化的推理过程，通过多模态大语言模型（MLLM）输出描述、比较与推理，从而更贴近人类的质量判断机制。</p>
+<h2>分数方法的局限</h2>
+<p>传统的 IQA 方法将质量简化为一个标量值。经典的结构相似性（SSIM）[2] 从结构信息退化的角度建模人类感知，在全参考场景下提供了较好的基准。但当两幅图像包含不同类型的失真（例如一幅模糊、另一幅有压缩伪影），或者图像内容未对齐时，单一分数难以反映人类对不同失真维度的权衡过程。</p>
+<h2>DepictQA 的层次化任务设计</h2>
+<p>DepictQA 将 IQA 分解为三个层次化的任务：</p>
+<p><strong>描述（Description）</strong>：给定一幅图像，生成对其视觉质量的文本描述，包括失真类型、严重程度和受影响的区域。例如：&quot;图像中存在明显的块效应，主要分布在天空区域，边缘有轻微模糊。&quot;</p>
+<p><strong>比较（Comparison）</strong>：给定两幅待比较图像及参考图像（全参考），或仅给定两幅待比较图像（无参考），输出哪一幅质量更高的判断。</p>
+<p><strong>推理（Reasoning）</strong>：在比较判断之后，生成解释该判断的理由。例如：&quot;虽然图像 A 的噪声较少，但图像 B 保留了更多细节，整体视觉体验更佳。&quot;</p>
+<p>描述任务提供了对失真特征的细粒度表示，比较任务建立了质量偏序关系，推理任务则学习如何将感知因素映射到判断结果。论文在构建的 M-BAPPS 数据集上进行训练，该数据集通过 GPT-4 生成初始描述和推理，并经过人工修正以减少模型偏差。</p>
+<h2>全参考与无参考场景的性能</h2>
+<p>阅读记录中提到，DepictQA通过层次化任务（描述、比较、推理）和MLLM输出语言化评估，在BAPPS上达到80.3%/84.2%准确率，超越所有对比分数方法，接近人类[1]。</p>
+<p>无参考扩展仅需移除参考图像。阅读记录中提到，混合训练后描述任务性能（84.5）反超全参考（76.4），笔记推测可能因为单图像任务更简单[1]。全参考设置下，模型需要同时处理两张图像；无参考设置下，模型只需专注于一张图像中的失真特征。但在比较和推理任务上，无参考性能略低于全参考（78.5 vs 82.3）。</p>
+<h2>推理质量的挑战</h2>
+<p>尽管 DepictQA 在比较任务上达到了 90% 的准确率，其推理合理率仅为 53%，与 GPT-4V 的 52% 相当。当前的 MLLM 在建立感知判断与语言解释之间的因果映射时仍存在困难。模型可能做出了正确的判断，但给出的理由与实际决策过程不符——例如，声称选择图像 A 是因为&quot;细节更丰富&quot;，但实际上模型的决策可能基于其他隐式特征。</p>
+<p>Q-Insight [3] 通过 GRPO（Group Relative Policy Optimization）联合训练评分与退化感知任务，然而，Q-Insight 同样缺少 GRPO 与监督微调（SFT）在推理质量上的直接消融实验，因此尚不清楚强化学习是否能根本性地改善推理与判断的对齐问题。DepictQA 优化语言生成似然，Q-Insight 优化任务奖励，这两种优化目标的差异可能是未来工作需要对比的关键维度。</p>
+<h2>数据集构造与泛化性</h2>
+<p>M-BAPPS 数据集的构造策略值得关注。论文使用 GPT-4 为 BAPPS 数据集中的图像对生成描述和推理，再通过人工修正来提升质量。这种半自动流程在降低标注成本的同时，也引入了生成模型的先验偏差。GPT-4 可能倾向于使用某些固定的描述模板或推理模式，而这些模式未必覆盖人类实际的多样化判断策略。</p>
+<p>论文未详细讨论 DepictQA 在其他 IQA 基准（如 KonIQ-10k、LIVE In the Wild）上的零样本性能，因此其泛化能力仍需进一步验证。对未见失真类型（例如对抗噪声、神经网络生成伪影）的鲁棒性也是一个开放问题。相比之下，Q-Insight 在多个域外数据集上展示了较强的泛化能力，但其域内性能略低于专用的分数回归方法（如 DeQA-Score），RL 方法的优势可能更多体现在泛化而非拟合上。</p>
+<p>从监督信号的来源来看，DepictQA 依赖文本描述的似然优化，Q-Insight 依赖任务奖励的策略梯度。前者的训练信号更密集（每个 token 都有监督），但可能受限于文本数据的质量；后者的信号更稀疏（仅在任务完成时给出奖励），但可能更直接地优化最终目标。这种权衡在多任务学习中并不罕见，但在 IQA 领域尚未得到系统性研究。</p>
+<h2>技术实现的可验证假设</h2>
+<p>论文提出的层次化任务框架隐含了一些可验证的设计假设：</p>
+<p><strong>描述任务是否为比较任务提供了有效的中间表示？</strong> 如果移除描述任务、仅保留比较和推理任务训练，模型性能是否会下降？这一消融实验可以揭示描述任务的实际作用——是提供了可迁移的特征表示，还是仅仅作为数据增强。</p>
+<p><strong>推理任务是否真的改善了比较任务的性能？</strong> 论文展示了推理合理率较低（53%），但比较准确率较高（90%）。推理任务可能并未显著影响比较任务的决策，而更像是一个独立的文本生成任务。如果移除推理任务，比较任务的性能是否保持不变？</p>
+<p>这些问题在原论文中未得到完整解答，但对于理解语言化 IQA 的工作机制至关重要。</p>
+<h2>待检验的开放问题</h2>
+<p>DepictQA 开辟了语言化 IQA 的新方向，但也留下了若干待检验的问题。是否可以引入对比学习或因果干预，使模型学习到更一致的推理路径？描述任务在无参考场景下的性能提升是否可复现到其他数据集？如果这一现象具有普遍性，可能揭示了全参考训练中的某种信息瓶颈——例如，模型过度依赖参考图像而忽略了失真图像自身的绝对质量特征。</p>
+<p>语言化 IQA 是否可以扩展到更细粒度的失真定位与分割？当前的描述任务仅输出文本，但失真往往在空间上是局部的。如果结合像素级或区域级的定位信息，是否可以进一步提升模型的可解释性与实用性？论文将三个任务混合训练，但未明确它们之间的依赖关系。如果强制模型在推理时显式依赖描述任务的输出，是否可以提升推理的合理性？</p>
+<h2>来源说明</h2>
+<p>本文基于 2026-07-25 的阅读笔记整理。相关文献（Q-Insight、SSIM）于 2026-10-13 补充核对，作为整理时的对照参考。文中的分析与推断基于论文报告的结果，未进行独立复现实验。对于笔记中提出的&quot;无参考场景下描述任务性能提升的原因&quot;等问题，具体机制仍需进一步验证。</p>
+<h2>参考文献</h2>
+<p>[1] <a href="https://arxiv.org/abs/2312.08962">Depicting Beyond Scores: Advancing Image Quality Assessment through Multi-modal Language Models</a></p>
+<p>[2] <a href="https://www.ece.uwaterloo.ca/~z70wang/publications/ssim.html">Image Quality Assessment: From Error Visibility to Structural Similarity</a></p>
+<p>[3] <a href="https://arxiv.org/abs/2503.22679">Q-Insight: Understanding Image Quality via Visual Reinforcement Learning</a></p>
+</div></article><div class="back"><a href="/blog/">← BACK TO NOTES</a></div></main></body></html>

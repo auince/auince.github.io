@@ -1,0 +1,106 @@
+<!DOCTYPE html><html lang="zh-CN"><head><meta charset="utf-8"><meta name="viewport" content="width=device-width,initial-scale=1,maximum-scale=2"><meta http-equiv="X-UA-Compatible" content="IE=edge,chrome=1"><meta name="theme-color" content="#060606"><style>
+:root{--bg:#060606;--text:#b6b6b6;--text-dim:#4a4a50;--accent:#5f8de0;--border:#1a1a20}
+*{box-sizing:border-box;margin:0;padding:0}
+html{font-size:20px}
+body{background:var(--bg);color:var(--text);font-family:"Helvetica Neue","Microsoft Yahei",-apple-system,sans-serif;-webkit-font-smoothing:antialiased;line-height:1.9}
+canvas#grid{position:fixed;top:0;left:0;width:100%;height:100%;z-index:0;pointer-events:none;opacity:0.5}
+.container{position:relative;z-index:1;max-width:640px;margin:0 auto;padding:8vh 30px 80px}
+.header{margin-bottom:50px}
+.header h1{font-size:1.4rem;font-weight:300;color:#e8e8e8;letter-spacing:1px;margin-bottom:16px;line-height:1.5}
+.header .meta{font-size:0.65rem;color:var(--text-dim);letter-spacing:2px;display:flex;gap:10px;align-items:center}
+.header .meta .dot{width:4px;height:4px;background:#333;border-radius:50%}
+.tags{display:flex;gap:8px;margin-top:14px}
+.tags span{padding:2px 10px;border:1px solid var(--border);border-radius:12px;font-size:0.6rem;color:var(--text-dim);letter-spacing:1px}
+.article{font-size:0.82rem;color:#8a8a92;font-weight:300}
+.article h2{font-size:1.05rem;color:#c0c0c8;font-weight:400;margin:40px 0 16px;letter-spacing:1px}
+.article h3{font-size:0.9rem;color:#a8a8b0;font-weight:400;margin:32px 0 12px}
+.article p{margin-bottom:18px}
+.article b,.article strong{color:#b0b0b8;font-weight:400}
+.article code{color:#d2906e;font-size:0.75rem;background:rgba(255,255,255,0.04);padding:1px 6px;border-radius:3px}
+.article pre{background:rgba(255,255,255,0.03);border:1px solid var(--border);border-radius:6px;padding:14px 18px;overflow-x:auto;font-size:0.72rem;line-height:1.6;margin:16px 0;color:#9a9aa2}
+.article ul,.article ol{margin:12px 0 18px 20px}
+.article li{margin-bottom:8px}
+.article blockquote{border-left:2px solid var(--accent);margin:20px 0;padding:10px 20px;color:#6a6a74;font-style:italic}
+.article blockquote p{margin:0}
+.article hr{border:none;border-top:1px solid var(--border);margin:32px 0}
+.article a{color:var(--accent)}
+.article img{max-width:100%;border-radius:6px}
+.back{margin-top:60px}
+.back a{color:#333;font-size:0.7rem;letter-spacing:2px;text-decoration:none;transition:color .4s}
+.back a:hover{color:#666}
+.list-header{text-align:center;margin-bottom:80px}
+.list-header h1{font-size:2.4rem;font-weight:200;color:#f0f0f0;letter-spacing:4px;margin-bottom:12px}
+.list-header .sub{font-size:0.8rem;color:var(--text-dim);letter-spacing:2px;font-weight:300}
+.posts{list-style:none;display:flex;flex-direction:column;gap:32px}
+.post-item{padding:0 0 32px;border-bottom:1px solid var(--border);transition:border-color .4s}
+.post-item:last-child{border-bottom:none}
+.post-item:hover{border-color:#2a2a34}
+.post-title{font-size:1.1rem;font-weight:400;margin-bottom:6px;letter-spacing:.5px}
+.post-title a{color:#e0e0e0;text-decoration:none;transition:color .3s}
+.post-title a:hover{color:var(--accent)}
+.post-meta{font-size:0.65rem;color:var(--text-dim);letter-spacing:1px;margin-bottom:10px;display:flex;gap:10px;align-items:center}
+.post-desc{font-size:0.8rem;color:#6a6a72;line-height:1.9;font-weight:300}
+.tag{display:inline-block;padding:2px 10px;border:1px solid var(--border);border-radius:12px;font-size:0.6rem;color:var(--text-dim);letter-spacing:1px}
+@media(max-width:768px){.container{padding:5vh 20px 60px}.header h1,.list-header h1{font-size:1.2rem}}
+.thought-list{font-size:0.85rem;color:#8a8a92;line-height:2}
+.thought-list h1,.thought-list h2,.thought-list h3{margin:0 0 20px}
+.thought-list ol{counter-reset:t;list-style:none;padding:0}
+.thought-list ol>li{position:relative;padding:22px 0 22px 48px;border-bottom:1px solid var(--border);counter-increment:t;font-size:0.82rem;line-height:1.8}
+.thought-list ol>li:last-child{border-bottom:none}
+.thought-list ol>li:before{content:counter(t,decimal-leading-zero);position:absolute;left:0;top:22px;font-size:0.65rem;color:var(--text-dim);font-weight:300;letter-spacing:1px}
+.thought-list ol>li strong,.thought-list ol>li b{color:#b8b8c0;font-weight:400}
+.thought-list ol>li a{color:var(--accent);text-decoration:none;font-size:0.75rem}
+.thought-list ol>li a:hover{color:#80b0f0}
+.thought-list ol>li p{margin-bottom:8px}
+.thought-list ol>li ul,.thought-list ol>li ol{margin:6px 0;padding-left:16px}
+.thought-list ol>li ul li,.thought-list ol>li ol li{border:none;padding:2px 0;font-size:0.8rem}
+.thought-list ol>li ul li:before{content:none}
+</style><title>特权上下文为何损害思考模型的自蒸馏 · Auince</title><meta name="description" content="在长推理预算下，特权教师信号可能抑制学生模型的探索能力——一个关于在线自蒸馏边界的负结果研究"><link rel="canonical" href="https://auince.github.io/blog/post/rethinking-opsd/"><link rel="icon" href="/favicon.ico"><link rel="stylesheet" href="/css/blog.css"></head><body><main class="container blog-article"><nav class="site-nav" aria-label="文章导航"><a href="/blog/">← Notes</a><a href="/">Auince /</a></nav><article><header class="header"><p class="eyebrow">自进化</p><h1>特权上下文为何损害思考模型的自蒸馏</h1><div class="meta"><span>阅读于 <time datetime="2026-10-11">2026-10-11</time></span></div><div class="tags"><span>自蒸馏</span><span>思考模型</span><span>测试时计算</span></div><p class="paper-source"><a href="https://arxiv.org/abs/2607.05184" target="_blank" rel="noopener noreferrer">Rethinking On-Policy Self-Distillation for Thinking Models ↗</a></p></header><div class="article"><p>在线策略蒸馏（on-policy distillation, OPD）曾在多个场景中让学生模型从自身生成轨迹中学习。但当教师模型获得&quot;特权上下文&quot;——完整推理链或最终答案——时，这一范式在思考模型（thinking models）上出现了系统性失效。论文[1]报告了明确的负结果：在五个 Qwen3 与 OLMo 思考模型上，带特权上下文的 OPD 在长推理预算下使平均采样准确率（avg@16）相对下降最高约 17%，恰在思考模型通常最能受益于测试时计算的区域造成损害。</p>
+<p>核心张力在于：特权教师本身保持了高 pass@k 性能，轨迹却显著变短；学生只继承了&quot;更短&quot;，却未能继承长预算下的收益。论文提出的 fork suppression（分叉抑制）假设指向一个候选机制：特权信号在高熵分叉位置施加的梯度压力，可能削弱了模型在不确定点探索多条路径的能力。但这一假设目前仅有行为关联证据，尚未通过干预实验提升为因果结论。</p>
+<h2>在线自蒸馏的基本逻辑与特权扩展</h2>
+<p>多模态推理中的 M-STAR 框架[2]系统研究了自进化训练的三个设计因子：训练方法（连续继承 optimizer 状态）、奖励模型（过程级 PRM 用于 rerank）、prompt 变化（无标注数据的加入）。该工作观察到探索潜力的衰减（Pass@K 持续下降）与性能饱和相关，并提出 Reward-Pass@2 作为平衡 exploration 与 exploitation 的监控指标。如果训练信号过早将模型推向确定性输出，多样性的丧失会限制长预算场景下的收益。</p>
+<p>特权上下文 OPD（OPSD）引入了不对称信息：教师模型提供蒸馏信号时可以访问学生不可见的上下文 <span class="katex"><math xmlns="http://www.w3.org/1998/Math/MathML"><semantics><mrow><mi>c</mi></mrow><annotation encoding="application/x-tex">c</annotation></semantics></math></span>——例如问题的完整解答步骤或最终答案。形式上，教师分布变为 <span class="katex"><math xmlns="http://www.w3.org/1998/Math/MathML"><semantics><mrow><msub><mi>π</mi><mi>θ</mi></msub><mo stretchy="false">(</mo><mi>y</mi><mi mathvariant="normal">∣</mi><mi>x</mi><mo separator="true">,</mo><mi>c</mi><mo stretchy="false">)</mo></mrow><annotation encoding="application/x-tex">\pi_\theta(y|x, c)</annotation></semantics></math></span>，学生在评估时仍是 <span class="katex"><math xmlns="http://www.w3.org/1998/Math/MathML"><semantics><mrow><msub><mi>π</mi><mi>θ</mi></msub><mo stretchy="false">(</mo><mi>y</mi><mi mathvariant="normal">∣</mi><mi>x</mi><mo stretchy="false">)</mo></mrow><annotation encoding="application/x-tex">\pi_\theta(y|x)</annotation></semantics></math></span>。</p>
+<h2>负结果的实证边界</h2>
+<p>在 OpenThoughts 训练设置下，五个模型一致显示：无特权的 OPD（<span class="katex"><math xmlns="http://www.w3.org/1998/Math/MathML"><semantics><mrow><mi>c</mi><mo>=</mo><mi mathvariant="normal">∅</mi></mrow><annotation encoding="application/x-tex">c = \emptyset</annotation></semantics></math></span>）略微提升或保持学生性能，而 OPSD（<span class="katex"><math xmlns="http://www.w3.org/1998/Math/MathML"><semantics><mrow><mi>c</mi><mo>=</mo></mrow><annotation encoding="application/x-tex">c =</annotation></semantics></math></span> 完整解答或仅最终答案）在长预算下导致下降，且下降幅度随评估预算增长而加剧。这一预算依赖性恰好与思考模型的设计意图相悖：测试时计算本应在长预算下带来更大收益。</p>
+<p>特权密度同样影响损害程度：提供完整解答（密集特权）比仅提供最终答案（稀疏特权）造成更严重的下降，暗示损害与&quot;模型在多少位置接收到特权信号&quot;有关。</p>
+<p>Countdown 设置的结果更为混合：Qwen3-4B-Think 仍出现微降，但 OLMo-7B-Think 反而微升。一种待验证的解释涉及 Countdown 任务的域内性质（训练与评测分布接近）与数据规模较小，但这一解释未被独立验证。混合结果削弱了&quot;OPSD 必然损害思考&quot;的普遍性主张，提示条件边界仍需厘清。</p>
+<p>关键对照实验是：在训练 rollout 中关闭思考标记（forcing immediate answers），学生性能几乎不变（0.591 → 0.590）。</p>
+<h2>分叉抑制假设：关联还是因果？</h2>
+<p>论文在 §4 提出了机制假设：fork suppression。思考模型在推理过程中会遇到分叉位置（forking positions）——即模型对下一 token 的熵较高、存在多条可行路径的时刻。在这些位置，特权教师因看到答案而倾向于选择某一条确定路径，生成的轨迹中思考标记密度下降、熵降低。学生接收带特权的蒸馏信号时，可能被训练为在高熵点过早锁定（lock in），从而削弱了探索能力。</p>
+<p>论文提供的证据包括：</p>
+<ul>
+<li>OPSD 训练后模型的 fork 率（高熵位置占比）下降</li>
+<li>逐 token 的 log-ratio 出现符号反转（sign reversal）</li>
+<li>思考标记密度与 fork 率同步下降</li>
+</ul>
+<p>但这些证据都是行为关联：三个现象同时发生，并不能排除共同原因或反向因果。论文未做干预实验——例如在 OPSD 损失中对高熵分叉位置的 token 施加梯度掩码或重加权，检验长预算性能能否恢复。因此 fork suppression 应视为待验证推断，而非已确立机制。</p>
+<p>Coverage Principle[3]则从理论角度指出，预训练模型在下游任务上的成功取决于其对目标分布的覆盖度（coverage profile），而非仅仅交叉熵。该工作证明 MLE 隐式优化覆盖度且泛化快于交叉熵。这一视角为理解 OPSD 失效提供了互补解释：特权上下文可能将学生推向一个在测试分布上覆盖度不佳的子空间。</p>
+<h2>可验证的下一步</h2>
+<p>阅读笔记围绕 fork suppression 假设列出了三个可验证行动：</p>
+<ol>
+<li><strong>最小对照复现</strong>：固定学生与数据，比较 <span class="katex"><math xmlns="http://www.w3.org/1998/Math/MathML"><semantics><mrow><mi>c</mi><mo>=</mo><mi mathvariant="normal">∅</mi></mrow><annotation encoding="application/x-tex">c = \emptyset</annotation></semantics></math></span> 与 <span class="katex"><math xmlns="http://www.w3.org/1998/Math/MathML"><semantics><mrow><mi>c</mi><mo>=</mo><mtext>gold</mtext></mrow><annotation encoding="application/x-tex">c = \text{gold}</annotation></semantics></math></span>，分别在 4k 与 32k 预算上报告 avg@16，验证预算依赖是否独立成立。</li>
+<li><strong>长度归一化的配对比较</strong>：从训练前后的评测 rollout 中提取 fork 率与思考标记密度，做长度归一化后确认标记下降不由轨迹整体变短驱动。</li>
+<li><strong>梯度干预</strong>：在 OPSD 损失中对高熵分叉位置施加梯度掩码或信号重加权，检验长预算性能能否恢复——这是将 fork suppression 从关联推向因果的最小干预。</li>
+</ol>
+<p>这三步中，第三步是关键：如果性能恢复，fork suppression 升级为可操作的因果假设；如果不恢复，需要重新审视其他混淆项（例如特权内容本身 vs. 信号施加位置）。</p>
+<h2>实践边界与开放问题</h2>
+<p>当前证据支持的结论是有条件的：</p>
+<ul>
+<li>在长推理预算+ 密集特权上下文 + OpenThoughts 类异质 prompt 分布上，OPSD 对 Qwen3/OLMo 思考模型造成损害。</li>
+<li>损害不由&quot;压制思考&quot;本身引起（关闭思考的对照实验性能不变），而与特权信号的交互方式有关。</li>
+<li>Countdown 的混合结果提示域内评估或小数据规模可能改变失效模式，但具体边界未明。</li>
+</ul>
+<p>开放问题包括：</p>
+<ul>
+<li>若特权信号只施加在低熵锁定位置，思考能力是否仍受损？这能拆分&quot;特权内容&quot;与&quot;施加位置&quot;两假设。</li>
+<li>提高采样温度或加入熵奖励能否抵消损害？还是症结在信用分配方向而非探索量？</li>
+<li>步骤级 PRM rerank 能否修复 OPSD 轨迹的探索缺陷？</li>
+</ul>
+<p>从更广视角看，这一负结果与 Coverage Principle 的理论框架呼应：next-token prediction 的成功依赖于对下游分布的覆盖度，M-STAR 的动态监控（Reward-Pass@2 + 自动调温）提供了一种实践路径：在在线训练中持续追踪探索指标，并在探索衰减时主动干预。将这一思路引入思考模型的自蒸馏，或许能在享受在线训练收益的同时，避开特权信号的陷阱。</p>
+<hr>
+<p><strong>来源说明</strong>：本文基于 2026-10-11 的阅读笔记整理，相关文献引用于 2026-10-13 补充核对。文中所述实验结果与机制假设均来自论文原文，未做独立复现。Countdown 设置的混合结果与 fork suppression 的因果地位是当前证据的主要不确定性来源。</p>
+<h2>References</h2>
+<p>[1] <a href="https://arxiv.org/abs/2607.05184">Rethinking On-Policy Self-Distillation for Thinking Models</a></p>
+<p>[2] <a href="https://proceedings.mlr.press/v267/liu25aj.html">Diving into Self-Evolving Training for Multimodal Reasoning</a></p>
+<p>[3] <a href="https://arxiv.org/abs/2510.15020">The Coverage Principle: How Pre-Training Enables Post-Training</a></p>
+</div></article><div class="back"><a href="/blog/">← BACK TO NOTES</a></div></main></body></html>

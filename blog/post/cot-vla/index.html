@@ -1,0 +1,105 @@
+<!DOCTYPE html><html lang="zh-CN"><head><meta charset="utf-8"><meta name="viewport" content="width=device-width,initial-scale=1,maximum-scale=2"><meta http-equiv="X-UA-Compatible" content="IE=edge,chrome=1"><meta name="theme-color" content="#060606"><style>
+:root{--bg:#060606;--text:#b6b6b6;--text-dim:#4a4a50;--accent:#5f8de0;--border:#1a1a20}
+*{box-sizing:border-box;margin:0;padding:0}
+html{font-size:20px}
+body{background:var(--bg);color:var(--text);font-family:"Helvetica Neue","Microsoft Yahei",-apple-system,sans-serif;-webkit-font-smoothing:antialiased;line-height:1.9}
+canvas#grid{position:fixed;top:0;left:0;width:100%;height:100%;z-index:0;pointer-events:none;opacity:0.5}
+.container{position:relative;z-index:1;max-width:640px;margin:0 auto;padding:8vh 30px 80px}
+.header{margin-bottom:50px}
+.header h1{font-size:1.4rem;font-weight:300;color:#e8e8e8;letter-spacing:1px;margin-bottom:16px;line-height:1.5}
+.header .meta{font-size:0.65rem;color:var(--text-dim);letter-spacing:2px;display:flex;gap:10px;align-items:center}
+.header .meta .dot{width:4px;height:4px;background:#333;border-radius:50%}
+.tags{display:flex;gap:8px;margin-top:14px}
+.tags span{padding:2px 10px;border:1px solid var(--border);border-radius:12px;font-size:0.6rem;color:var(--text-dim);letter-spacing:1px}
+.article{font-size:0.82rem;color:#8a8a92;font-weight:300}
+.article h2{font-size:1.05rem;color:#c0c0c8;font-weight:400;margin:40px 0 16px;letter-spacing:1px}
+.article h3{font-size:0.9rem;color:#a8a8b0;font-weight:400;margin:32px 0 12px}
+.article p{margin-bottom:18px}
+.article b,.article strong{color:#b0b0b8;font-weight:400}
+.article code{color:#d2906e;font-size:0.75rem;background:rgba(255,255,255,0.04);padding:1px 6px;border-radius:3px}
+.article pre{background:rgba(255,255,255,0.03);border:1px solid var(--border);border-radius:6px;padding:14px 18px;overflow-x:auto;font-size:0.72rem;line-height:1.6;margin:16px 0;color:#9a9aa2}
+.article ul,.article ol{margin:12px 0 18px 20px}
+.article li{margin-bottom:8px}
+.article blockquote{border-left:2px solid var(--accent);margin:20px 0;padding:10px 20px;color:#6a6a74;font-style:italic}
+.article blockquote p{margin:0}
+.article hr{border:none;border-top:1px solid var(--border);margin:32px 0}
+.article a{color:var(--accent)}
+.article img{max-width:100%;border-radius:6px}
+.back{margin-top:60px}
+.back a{color:#333;font-size:0.7rem;letter-spacing:2px;text-decoration:none;transition:color .4s}
+.back a:hover{color:#666}
+.list-header{text-align:center;margin-bottom:80px}
+.list-header h1{font-size:2.4rem;font-weight:200;color:#f0f0f0;letter-spacing:4px;margin-bottom:12px}
+.list-header .sub{font-size:0.8rem;color:var(--text-dim);letter-spacing:2px;font-weight:300}
+.posts{list-style:none;display:flex;flex-direction:column;gap:32px}
+.post-item{padding:0 0 32px;border-bottom:1px solid var(--border);transition:border-color .4s}
+.post-item:last-child{border-bottom:none}
+.post-item:hover{border-color:#2a2a34}
+.post-title{font-size:1.1rem;font-weight:400;margin-bottom:6px;letter-spacing:.5px}
+.post-title a{color:#e0e0e0;text-decoration:none;transition:color .3s}
+.post-title a:hover{color:var(--accent)}
+.post-meta{font-size:0.65rem;color:var(--text-dim);letter-spacing:1px;margin-bottom:10px;display:flex;gap:10px;align-items:center}
+.post-desc{font-size:0.8rem;color:#6a6a72;line-height:1.9;font-weight:300}
+.tag{display:inline-block;padding:2px 10px;border:1px solid var(--border);border-radius:12px;font-size:0.6rem;color:var(--text-dim);letter-spacing:1px}
+@media(max-width:768px){.container{padding:5vh 20px 60px}.header h1,.list-header h1{font-size:1.2rem}}
+.thought-list{font-size:0.85rem;color:#8a8a92;line-height:2}
+.thought-list h1,.thought-list h2,.thought-list h3{margin:0 0 20px}
+.thought-list ol{counter-reset:t;list-style:none;padding:0}
+.thought-list ol>li{position:relative;padding:22px 0 22px 48px;border-bottom:1px solid var(--border);counter-increment:t;font-size:0.82rem;line-height:1.8}
+.thought-list ol>li:last-child{border-bottom:none}
+.thought-list ol>li:before{content:counter(t,decimal-leading-zero);position:absolute;left:0;top:22px;font-size:0.65rem;color:var(--text-dim);font-weight:300;letter-spacing:1px}
+.thought-list ol>li strong,.thought-list ol>li b{color:#b8b8c0;font-weight:400}
+.thought-list ol>li a{color:var(--accent);text-decoration:none;font-size:0.75rem}
+.thought-list ol>li a:hover{color:#80b0f0}
+.thought-list ol>li p{margin-bottom:8px}
+.thought-list ol>li ul,.thought-list ol>li ol{margin:6px 0;padding-left:16px}
+.thought-list ol>li ul li,.thought-list ol>li ol li{border:none;padding:2px 0;font-size:0.8rem}
+.thought-list ol>li ul li:before{content:none}
+</style><title>CoT-VLA: 视觉链式推理如何填补具身智能的中间规划空白 · Auince</title><meta name="description" content="CoT-VLA 通过预测未来图像帧作为视觉目标，在 VLA 模型中引入显式推理步骤，在真实世界操作任务上比当时最优基线提升 17%，但视觉生成质量与计算开销仍是关键瓶颈。"><link rel="canonical" href="https://auince.github.io/blog/post/cot-vla/"><link rel="icon" href="/favicon.ico"><link rel="stylesheet" href="/css/blog.css"></head><body><main class="container blog-article"><nav class="site-nav" aria-label="文章导航"><a href="/blog/">← Notes</a><a href="/">Auince /</a></nav><article><header class="header"><p class="eyebrow">具身智能</p><h1>CoT-VLA: 视觉链式推理如何填补具身智能的中间规划空白</h1><div class="meta"><span>阅读于 <time datetime="2026-07-21">2026-07-21</time></span><span>补充于 <time datetime="2026-07-22">2026-07-22</time></span></div><div class="tags"><span>VLA</span><span>视觉推理</span><span>机器人</span></div><p class="paper-source"><a href="https://arxiv.org/abs/2503.22020" target="_blank" rel="noopener noreferrer">CoT-VLA: Visual Chain-of-Thought Reasoning for Vision-Language-Action Models ↗</a></p></header><div class="article"><p>视觉-语言-动作（VLA）模型正在从&quot;看到-执行&quot;的直接映射转向&quot;看到-规划-执行&quot;的推理增强范式。CoT-VLA 在 2025 年 3 月提出用视觉链式推理填补 VLA 缺失的中间推理步骤：模型在生成动作序列之前，先预测一张未来的子目标图像作为视觉目标[1]。论文报告在真实世界操作任务的基准测试中取得 17% 的性能提升，结合 OpenX 数据集与无动作标注视频的预训练后，从直接微调基线的 53.7% 提升到 78.8%，相对提升 46.7%[1]。但在两个长程任务的小规模对照实验中，用真实子目标图像替换生成图像使成功率从 20% 升至 60%、从 0% 升至 40%，说明视觉推理质量仍是关键制约因素。</p>
+<p>本文基于 2026 年 7 月的阅读笔记整理，结合 2026 年 10 月补充核对的相关文献；未进行独立复现。</p>
+<h2>当前 VLA 模型的推理空白</h2>
+<p>传统 VLA 模型将感知输入直接映射到动作输出，缺少显式的中间推理或规划步骤[1]。这种端到端架构在简单任务上有效，但在需要多步骤协调、长程依赖或时序规划的复杂操作中表现受限。</p>
+<p><a href="https://arxiv.org/abs/2406.09246">OpenVLA</a> 是 2024 年发布的开源 VLA 模型，在多样化真实机器人演示数据上训练[2]。它采用视觉-语言编码器加动作解码器的结构，输入当前观察和语言指令，直接输出动作策略[2]。这种直接映射在端到端优化上简单直接，但任务需要&quot;先移开遮挡物再拿起目标&quot;这类多步骤推理时，模型必须在隐式表示中完成所有规划，没有可解释的中间状态，失败时也难以定位是感知错误还是规划错误。</p>
+<p>CoT-VLA 的核心假设：让模型在生成动作之前先预测未来应该达到的视觉状态，视觉目标可以充当可解释的中间推理步骤，类似语言模型中的思维链（Chain-of-Thought）提示[1]。区别在于语言 CoT 用文本描述推理过程，CoT-VLA 用图像表示未来目标状态——机器人操作任务的最终目标本身就是视觉-空间配置的变化，图像比语言更直接。</p>
+<h2>视觉链式推理的实现机制</h2>
+<p>CoT-VLA 的推理流程分为两个阶段：<strong>视觉目标预测</strong>和<strong>条件动作生成</strong>[1]。</p>
+<p>视觉目标预测阶段，模型接收当前观察图像 <span class="katex"><math xmlns="http://www.w3.org/1998/Math/MathML"><semantics><mrow><msub><mi>o</mi><mi>t</mi></msub></mrow><annotation encoding="application/x-tex">o_t</annotation></semantics></math></span> 和语言指令 <span class="katex"><math xmlns="http://www.w3.org/1998/Math/MathML"><semantics><mrow><mi>l</mi></mrow><annotation encoding="application/x-tex">l</annotation></semantics></math></span>，预测未来 <span class="katex"><math xmlns="http://www.w3.org/1998/Math/MathML"><semantics><mrow><mi>n</mi></mrow><annotation encoding="application/x-tex">n</annotation></semantics></math></span> 帧处的一张子目标图像 <span class="katex"><math xmlns="http://www.w3.org/1998/Math/MathML"><semantics><mrow><msub><mi>s</mi><mrow><mi>t</mi><mo>+</mo><mi>n</mi></mrow></msub></mrow><annotation encoding="application/x-tex">s_{t+n}</annotation></semantics></math></span>[1]。这张子目标图像以自回归方式生成其内部的视觉 token，表示未来子目标的场景状态。</p>
+<p>条件动作生成阶段，模型将当前观察 <span class="katex"><math xmlns="http://www.w3.org/1998/Math/MathML"><semantics><mrow><msub><mi>o</mi><mi>t</mi></msub></mrow><annotation encoding="application/x-tex">o_t</annotation></semantics></math></span>、语言指令 <span class="katex"><math xmlns="http://www.w3.org/1998/Math/MathML"><semantics><mrow><mi>l</mi></mrow><annotation encoding="application/x-tex">l</annotation></semantics></math></span> 和预测的子目标图像 <span class="katex"><math xmlns="http://www.w3.org/1998/Math/MathML"><semantics><mrow><msub><mi>s</mi><mrow><mi>t</mi><mo>+</mo><mi>n</mi></mrow></msub></mrow><annotation encoding="application/x-tex">s_{t+n}</annotation></semantics></math></span> 共同作为输入，生成一小段动作序列（action chunk）[1]。关键设计包括<strong>混合注意力机制（hybrid attention）<strong>和</strong>动作块预测（action chunk prediction）</strong>[1]。</p>
+<p>消融实验显示移除混合注意力会导致性能下降[1]，但原始笔记中未记录具体实现细节。动作块预测指模型一次输出多个连续时间步的动作，而非逐步生成[1]。机器人控制中常见这种做法，因为动作执行有物理延迟，批量预测可以提前规划轨迹并减少推理调用次数。消融实验确认动作块预测对 CoT-VLA 的性能有正向贡献[1]。</p>
+<h2>训练数据与预训练策略</h2>
+<p>CoT-VLA 的训练分为预训练和任务微调两个阶段[1]。</p>
+<p>预训练阶段结合 OpenX 数据集与<strong>无动作标注的视频数据</strong>（包括 EPIC-KITCHENS 等）[1]。这些视频记录了日常活动的第一人称视角，但不包含机器人动作标签。CoT-VLA 在这些视频上训练视觉目标预测模块，模型通过预测真实视频中的未来帧来学习场景动态和物体交互的时序模式。预训练的优势是数据规模远大于带标注的机器人演示数据集。</p>
+<p>论文报告预训练后从直接微调 VILA-U 基线的 53.7% 提升到 78.8%，相对提升 46.7%[1]。这表明视觉预测能力的迁移对 VLA 性能至关重要，但需要注意这是在特定基准和实验设置下测得的结果。</p>
+<p>任务微调阶段使用带动作标注的机器人演示数据，同时训练视觉目标预测和动作生成两个模块[1]。模型在给定指令和当前状态下，学习预测合理的未来视觉目标并生成达成该目标的动作。</p>
+<p><a href="https://arxiv.org/abs/2507.13152">SE-VLN</a> 是视觉导航中的另一条路线，使用测试期经验库和反思机制提升导航成功率[3]。SE-VLN 的特点是依赖模拟器提供真值反馈来构建和修正经验库，与 CoT-VLA 从视频学习预测、再用机器人演示微调的方式不同。</p>
+<h2>实验结果与性能边界</h2>
+<p>CoT-VLA 在真实世界操作任务的基准测试中，论文报告了 17% 的性能提升[1]。原始笔记中未记录具体基线名称和任务类型细节。</p>
+<p>消融实验验证了三个关键组件的有效性[1]：</p>
+<ol>
+<li><strong>视觉链式推理</strong>：移除视觉目标预测，直接从观察生成动作，性能显著下降。</li>
+<li><strong>混合注意力机制</strong>：移除后模型性能降低。</li>
+<li><strong>动作块预测</strong>：单步动作预测的性能低于批量预测。</li>
+</ol>
+<p>关键发现是<strong>视觉推理质量直接影响动作执行效果</strong>：论文在两个分布外（OOD）长程任务上进行了小规模对照实验，每个任务每种条件测试 5 次[1]。用真实的子目标图像替换模型生成的预测图像后，一个任务的成功率从 20% 升至 60%，另一个从 0% 升至 40%，都是绝对增加 40 个百分点[1]。这一对比实验表明视觉目标预测的准确性是影响 CoT-VLA 整体性能的重要因素，但需要注意这是在特定两个任务上的小规模测试，并非所有机器人任务的普遍现象。</p>
+<p>这一结果引发几个值得关注的问题：</p>
+<p><strong>视觉生成误差的累积效应</strong>：子目标图像由自回归生成的视觉 token 构成，早期 token 的预测误差可能影响后续生成。如果预测的物体位置就偏离实际状态，可能影响动作规划的准确性。</p>
+<p><strong>计算开销的实时性挑战</strong>：论文报告了图像 token 生成的计算开销，在 action chunk 为 10 的情况下平均约 7 倍的推理时间增加[1]。虽然原始笔记未记录这一数字，但论文明确指出图像生成开销是实际部署的限制因素。</p>
+<p><strong>泛化到未见任务的能力</strong>：论文提到模型在未见任务和场景中的泛化能力仍然有限[1]。这是 VLA 模型的普遍挑战——训练数据中的物体、场景布局和任务类型有限，模型在遇到新物体或新指令时容易失败。视觉链式推理是否能提升泛化能力，取决于预测的视觉目标是否能表示训练集之外的新配置，这需要在更多样化的测试集上验证。</p>
+<h2>视觉推理与动作策略的架构对照</h2>
+<p>将 CoT-VLA 与 OpenVLA 对照，可以更清楚地看到显式视觉中间表示的作用[2]。</p>
+<p>OpenVLA 的输入是 <span class="katex"><math xmlns="http://www.w3.org/1998/Math/MathML"><semantics><mrow><mo stretchy="false">(</mo><msub><mi>o</mi><mi>t</mi></msub><mo separator="true">,</mo><mi>l</mi><mo stretchy="false">)</mo></mrow><annotation encoding="application/x-tex">(o_t, l)</annotation></semantics></math></span>，输出是动作策略 <span class="katex"><math xmlns="http://www.w3.org/1998/Math/MathML"><semantics><mrow><mi>π</mi><mo stretchy="false">(</mo><msub><mi>a</mi><mi>t</mi></msub><mi mathvariant="normal">∣</mi><msub><mi>o</mi><mi>t</mi></msub><mo separator="true">,</mo><mi>l</mi><mo stretchy="false">)</mo></mrow><annotation encoding="application/x-tex">\pi(a_t | o_t, l)</annotation></semantics></math></span>[2]。模型内部的表示是端到端学习的，没有显式的中间目标。任务失败时很难判断是感知编码错误、语言理解错误还是动作规划错误。</p>
+<p>CoT-VLA 的输入是 <span class="katex"><math xmlns="http://www.w3.org/1998/Math/MathML"><semantics><mrow><mo stretchy="false">(</mo><msub><mi>o</mi><mi>t</mi></msub><mo separator="true">,</mo><mi>l</mi><mo stretchy="false">)</mo></mrow><annotation encoding="application/x-tex">(o_t, l)</annotation></semantics></math></span>，中间生成子目标图像 <span class="katex"><math xmlns="http://www.w3.org/1998/Math/MathML"><semantics><mrow><msub><mi>s</mi><mrow><mi>t</mi><mo>+</mo><mi>n</mi></mrow></msub></mrow><annotation encoding="application/x-tex">s_{t+n}</annotation></semantics></math></span>，最终输出动作序列[1]。中间的视觉目标充当&quot;检查点&quot;——可以可视化地检查模型是否理解了任务目标，也可以在视觉预测明显错误时提前中止动作执行。</p>
+<p>这种对比也反映了具身智能中&quot;表示选择&quot;的权衡：用语言、图像还是符号作为中间推理表示？语言 CoT 在大语言模型中已被广泛验证，但机器人操作任务的目标本质上是视觉-空间配置的变化，用语言描述&quot;物体应该向左移动 5 厘米&quot;不如直接用图像显示目标位置直观。CoT-VLA 的贡献在于验证了视觉表示作为中间推理载体在 VLA 任务上的可行性，但这并不意味着视觉表示在所有情况下都优于语言或混合表示——如果任务涉及复杂的逻辑推理或长程依赖，语言可能更适合表达因果关系和约束条件。</p>
+<h2>未来方向与开放问题</h2>
+<p>CoT-VLA 展示了视觉链式推理在 VLA 模型中的潜力，也暴露了几个需要进一步研究的问题：</p>
+<p><strong>视觉生成质量的提升路径</strong>：真实子目标图像与生成图像在动作执行效果上存在差距，改进视觉预测模块是关键方向。可能的路径包括引入扩散模型生成更高保真度的图像、使用对抗训练提升视觉真实性、或将视觉预测与物理模拟器结合以约束预测的物理合理性。</p>
+<p><strong>错误累积与纠错机制</strong>：自回归生成的视觉 token 可能积累误差。一个潜在的解决方案是引入闭环反馈——在执行动作后观察真实结果，将实际观察与预测图像对比，如果偏差过大则重新规划。这类似模型预测控制（MPC）中的滚动优化策略，但需要在推理速度和纠错效果之间权衡。</p>
+<p><strong>计算效率与实时部署</strong>：图像生成的计算开销是实际部署的限制因素。可能的优化包括使用轻量级生成模型、降低预测帧的分辨率或帧率、或采用混合策略——仅在关键决策点生成视觉目标，在常规执行中回退到直接动作预测。</p>
+<p><strong>多模态中间表示的融合</strong>：是否可以将视觉 CoT 与语言 CoT 结合？例如，模型先用语言描述子目标（&quot;先移开杯子&quot;），再生成对应的视觉目标图像，最后生成动作。这种混合表示可能兼具语言的抽象推理能力和视觉的空间精确性，但也增加了模型复杂度和训练难度。</p>
+<h2>来源说明</h2>
+<p>本文基于 2026 年 7 月 21-22 日对 CoT-VLA 论文的阅读笔记整理，相关文献于 2026 年 10 月 13 日补充核对。文中对视觉链式推理机制、训练策略和性能边界的分析基于原始笔记记录的论文内容与 2026 年 10 月直接核对的论文原文；未进行独立复现实验验证。</p>
+<h2>References</h2>
+<p>[1] <a href="https://arxiv.org/abs/2503.22020">CoT-VLA: Visual Chain-of-Thought Reasoning for Vision-Language-Action Models</a></p>
+<p>[2] <a href="https://arxiv.org/abs/2406.09246">OpenVLA: An Open-Source Vision-Language-Action Model</a></p>
+<p>[3] <a href="https://arxiv.org/abs/2507.13152">SE-VLN: A Self-Evolving Vision-Language Navigation Framework Based on Multimodal Large Language Models</a></p>
+</div></article><div class="back"><a href="/blog/">← BACK TO NOTES</a></div></main></body></html>
