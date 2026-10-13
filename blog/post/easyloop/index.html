@@ -1,0 +1,168 @@
+<!DOCTYPE html><html lang="zh-CN"><head><meta charset="utf-8"><meta name="viewport" content="width=device-width,initial-scale=1,maximum-scale=2"><meta http-equiv="X-UA-Compatible" content="IE=edge,chrome=1"><meta name="theme-color" content="#060606"><style>
+:root{--bg:#060606;--text:#b6b6b6;--text-dim:#4a4a50;--accent:#5f8de0;--border:#1a1a20}
+*{box-sizing:border-box;margin:0;padding:0}
+html{font-size:20px}
+body{background:var(--bg);color:var(--text);font-family:"Helvetica Neue","Microsoft Yahei",-apple-system,sans-serif;-webkit-font-smoothing:antialiased;line-height:1.9}
+canvas#grid{position:fixed;top:0;left:0;width:100%;height:100%;z-index:0;pointer-events:none;opacity:0.5}
+.container{position:relative;z-index:1;max-width:640px;margin:0 auto;padding:8vh 30px 80px}
+.header{margin-bottom:50px}
+.header h1{font-size:1.4rem;font-weight:300;color:#e8e8e8;letter-spacing:1px;margin-bottom:16px;line-height:1.5}
+.header .meta{font-size:0.65rem;color:var(--text-dim);letter-spacing:2px;display:flex;gap:10px;align-items:center}
+.header .meta .dot{width:4px;height:4px;background:#333;border-radius:50%}
+.tags{display:flex;gap:8px;margin-top:14px}
+.tags span{padding:2px 10px;border:1px solid var(--border);border-radius:12px;font-size:0.6rem;color:var(--text-dim);letter-spacing:1px}
+.article{font-size:0.82rem;color:#8a8a92;font-weight:300}
+.article h2{font-size:1.05rem;color:#c0c0c8;font-weight:400;margin:40px 0 16px;letter-spacing:1px}
+.article h3{font-size:0.9rem;color:#a8a8b0;font-weight:400;margin:32px 0 12px}
+.article p{margin-bottom:18px}
+.article b,.article strong{color:#b0b0b8;font-weight:400}
+.article code{color:#d2906e;font-size:0.75rem;background:rgba(255,255,255,0.04);padding:1px 6px;border-radius:3px}
+.article pre{background:rgba(255,255,255,0.03);border:1px solid var(--border);border-radius:6px;padding:14px 18px;overflow-x:auto;font-size:0.72rem;line-height:1.6;margin:16px 0;color:#9a9aa2}
+.article ul,.article ol{margin:12px 0 18px 20px}
+.article li{margin-bottom:8px}
+.article blockquote{border-left:2px solid var(--accent);margin:20px 0;padding:10px 20px;color:#6a6a74;font-style:italic}
+.article blockquote p{margin:0}
+.article hr{border:none;border-top:1px solid var(--border);margin:32px 0}
+.article a{color:var(--accent)}
+.article img{max-width:100%;border-radius:6px}
+.back{margin-top:60px}
+.back a{color:#333;font-size:0.7rem;letter-spacing:2px;text-decoration:none;transition:color .4s}
+.back a:hover{color:#666}
+.list-header{text-align:center;margin-bottom:80px}
+.list-header h1{font-size:2.4rem;font-weight:200;color:#f0f0f0;letter-spacing:4px;margin-bottom:12px}
+.list-header .sub{font-size:0.8rem;color:var(--text-dim);letter-spacing:2px;font-weight:300}
+.posts{list-style:none;display:flex;flex-direction:column;gap:32px}
+.post-item{padding:0 0 32px;border-bottom:1px solid var(--border);transition:border-color .4s}
+.post-item:last-child{border-bottom:none}
+.post-item:hover{border-color:#2a2a34}
+.post-title{font-size:1.1rem;font-weight:400;margin-bottom:6px;letter-spacing:.5px}
+.post-title a{color:#e0e0e0;text-decoration:none;transition:color .3s}
+.post-title a:hover{color:var(--accent)}
+.post-meta{font-size:0.65rem;color:var(--text-dim);letter-spacing:1px;margin-bottom:10px;display:flex;gap:10px;align-items:center}
+.post-desc{font-size:0.8rem;color:#6a6a72;line-height:1.9;font-weight:300}
+.tag{display:inline-block;padding:2px 10px;border:1px solid var(--border);border-radius:12px;font-size:0.6rem;color:var(--text-dim);letter-spacing:1px}
+@media(max-width:768px){.container{padding:5vh 20px 60px}.header h1,.list-header h1{font-size:1.2rem}}
+.thought-list{font-size:0.85rem;color:#8a8a92;line-height:2}
+.thought-list h1,.thought-list h2,.thought-list h3{margin:0 0 20px}
+.thought-list ol{counter-reset:t;list-style:none;padding:0}
+.thought-list ol>li{position:relative;padding:22px 0 22px 48px;border-bottom:1px solid var(--border);counter-increment:t;font-size:0.82rem;line-height:1.8}
+.thought-list ol>li:last-child{border-bottom:none}
+.thought-list ol>li:before{content:counter(t,decimal-leading-zero);position:absolute;left:0;top:22px;font-size:0.65rem;color:var(--text-dim);font-weight:300;letter-spacing:1px}
+.thought-list ol>li strong,.thought-list ol>li b{color:#b8b8c0;font-weight:400}
+.thought-list ol>li a{color:var(--accent);text-decoration:none;font-size:0.75rem}
+.thought-list ol>li a:hover{color:#80b0f0}
+.thought-list ol>li p{margin-bottom:8px}
+.thought-list ol>li ul,.thought-list ol>li ol{margin:6px 0;padding-left:16px}
+.thought-list ol>li ul li,.thought-list ol>li ol li{border:none;padding:2px 0;font-size:0.8rem}
+.thought-list ol>li ul li:before{content:none}
+</style><title>EasyLoop：面向 Loop Engineering 的 Agent 原生框架设想 · Auince</title><link rel="icon" href="/favicon.ico"></head><body><canvas id="grid"></canvas><div class="container"><div class="header"><h1>EasyLoop：面向 Loop Engineering 的 Agent 原生框架设想</h1><div class="meta"><span>2026-06</span></div><div class="tags"><span>Loop Engineering</span><span>Agent Framework</span><span>EasyLoop</span><span>AI Agent</span></div></div><div class="article"><p>最近看了很多关于 Loop Engineering 的文章，我发现Loop这个概念其实可以被理解得更宽泛。它不应该只局限于 /goal 模式下那种长程、繁重、复杂的大项目，而是可以进一步扩展到更多日常工作和垂直任务场景中。</p>
+<p>在当前基于 Agent 的任务流程中，人的 review 往往是主要卡点。</p>
+<p>原因在于，Agent 的交付内容具有较大的不确定性。很多时候，人必须依靠自己的经验和推演能力，在 Agent 生成结果之后进行审查，再根据判断结果让 Agent 继续修改和优化。</p>
+<p>如果进一步抽象，所谓人来 review，本质上是：人根据自己的知识、经验和目标预期，提前判断 Agent 当前交付内容的好坏。</p>
+<p>例如，一个前端界面最终要交付给甲方。甲方拿到之后再反馈意见，是一个真实但成本很高的 judge 过程。因此，在交付之前，程序员往往需要揣摩甲方心理，预判这个界面是否符合甲方需求，再预判甲方可能提出的修改意见，然后提前让 Agent 进行调整。</p>
+<p>这也引出了一个核心问题：</p>
+<p><strong>在什么情况下，我们可以降低甚至去掉人的 review 成本，搭建一个完整的 Agent Loop？</strong></p>
+<h2>一、可以通过规则或代码验收的任务</h2>
+<p>第一类场景，是任务结果能够通过明确的规则、代码或指标进行验收。</p>
+<p>例如，Agent 交付代码时，验收标准相对清晰：代码能否运行、测试脚本是否通过、性能指标是否达到要求。只要这些规则可以被程序化，就可以让 Agent 不断修改代码、运行测试、读取报错、继续优化，直到任务完成。</p>
+<p>类似地，如果我们给定 Agent 一个明确指标，例如模型精度、运行速度、成本上限、召回率、格式合规率等，也可以让它围绕这个指标持续迭代。</p>
+<p><strong>这类任务的关键在于：judge 过程可以被规则化、自动化、程序化。</strong></p>
+<p>一旦 judge 成本足够低，Loop 就可以自然形成。</p>
+<h2>二、Agent as Judge 足够可信的任务</h2>
+<p>第二类场景，是我们认为 Agent as Judge 的结果已经足够可信。</p>
+<p>这类任务未必能完全通过代码或规则验收，但可以由另一个 Agent 进行相对稳定的评价。</p>
+<p>例如，让 Agent 根据大纲制作 PPT，再让另一个 Agent 检查 PPT 是否覆盖大纲、逻辑是否完整、页面是否冗余、表达是否清晰。又例如，让 Agent 评价图片质量、判断一段文案是否符合目标风格、检查简历和岗位 JD 的匹配度。</p>
+<p><strong>这类任务的关键在于：虽然 judge 不是绝对客观的，但 Agent 的评价已经足够接近人的低成本预判。</strong></p>
+<p>在这些场景中，人不一定完全退出流程，但可以从逐步审查者转变为最终抽检者或目标设定者。</p>
+<h2>三、生活和工作中的 Loop 场景</h2>
+<p>当我们把 Loop 理解为生成—评价—修正—再生成的自动循环后，会发现很多生活和工作任务都可以被 Loop 化。</p>
+<h3>购物比价 Loop</h3>
+<p>Agent 搜索商品，调用 MCP 工具获取价格、参数、评价、售后、重量、续航、品牌等信息，然后按照预算和需求进行打分。系统剔除不符合条件的商品，继续补充候选项，最终输出 Top 3 推荐。</p>
+<p>这个过程中，人的作用不再是逐个商品比较，而是提前设定预算、偏好和硬性条件。</p>
+<h3>租房筛选 Loop</h3>
+<p>Agent 搜集房源信息，结合通勤时间、价格、面积、楼层、采光、噪音、物业、周边配套等因素进行打分，并自动排除风险房源，最后生成看房清单。</p>
+<p>传统租房筛选需要人反复打开房源、比较位置、查看评论和地图。Loop 化之后，这些低价值判断可以被系统持续执行。</p>
+<h3>简历优化 Loop</h3>
+<p>Agent 读取岗位 JD，修改简历内容；随后 Agent Judge 检查关键词覆盖率、岗位匹配度、量化结果、废话比例和表达清晰度；如果不达标，再继续修改。</p>
+<p>这个流程的价值在于，它不只是帮我改简历，而是可以围绕一个明确岗位进行多轮优化。</p>
+<h3>深度学习模型优化 Loop</h3>
+<p>Agent 读取代码、配置项和数据情况，自动修改参数或训练脚本，启动训练，读取测试指标，再分析结果并继续优化。</p>
+<p>这类任务最适合 Loop 化，因为它天然具有明确反馈：训练日志、验证集指标、显存占用、运行时间、错误信息等都可以作为下一轮决策依据。</p>
+<h3>不需要强 review 的自动化任务</h3>
+<p>除了需要 judge 的任务，还有一些任务本身不需要复杂 review，也可以通过 Loop 提效。</p>
+<p>例如：定时论文推送、每日日报总结、代码 bug 挖掘、信息监控、项目进展汇总等。</p>
+<p>这些任务的共同点是：它们不一定需要复杂判断，但需要持续执行、持续更新、持续整理。</p>
+<h2>四、EasyLoop：一个 Loop 原生的 Agent 项目搭建框架</h2>
+<p>基于上述思考，我开始尝试设计一个 Loop 原生的 Agent 项目搭建框架，暂时命名为 EasyLoop。</p>
+<p>EasyLoop 的目标不是再做一个简单的 Agent 调用框架，而是提供一个可以快速搭建、管理和运行不同 Loop 的基础设施。</p>
+<p>它采用 Orchestrator 内核，在其上构建不同类型的 Loop。整体原型框架由三个部分组成：</p>
+<p><strong>Loop、Manage、Build。</strong></p>
+<h2>五、Loop 部分：以角色为单位设计循环流程</h2>
+<p>Loop 部分负责定义具体任务流程。</p>
+<p>在 EasyLoop 中，每个 Loop 被建模为一个<strong>有向有环图</strong>。图中的每个节点是一个角色，每条边表示状态转移。</p>
+<p>这里的角色不是简单的 prompt persona，而是一个<strong>带有任务边界的执行单元</strong>。不同角色对应不同任务，也对应不同的输入上下文、输出上下文、可调用工具、可使用 MCP 和 Skill。</p>
+<p>例如，在一个简历优化 Loop 中，可以设计以下角色：</p>
+<ul>
+<li><strong>JD Reader</strong>：负责理解岗位要求</li>
+<li><strong>Resume Editor</strong>：负责修改简历</li>
+<li><strong>Resume Judge</strong>：负责检查匹配度</li>
+<li><strong>Keyword Checker</strong>：负责检查关键词覆盖</li>
+<li><strong>Finalizer</strong>：负责输出最终版本</li>
+</ul>
+<p>这些角色之间不是线性流程，而是可以循环跳转。比如 Judge 发现简历量化不足，就把任务退回给 Resume Editor；Keyword Checker 发现关键词覆盖不足，就要求 Resume Editor 针对性补充；当所有评价都达标后，流程才进入 Finalizer。</p>
+<p>因此，Loop 部分的核心不是调用多个 Agent，而是：</p>
+<p><strong>把任务拆成可循环、可评价、可回退的角色图。</strong></p>
+<h2>六、Manage 部分：管理状态、上下文和工作树</h2>
+<p>Manage 部分负责管理整个 Loop 运行过程中的中间状态、上下文和工作树。</p>
+<p>我设想使用 Git 和 SQLite 作为底层管理方式，以 Markdown 文档数据库作为主要管理对象。</p>
+<p>在 Loop 运行过程中，不同角色会不断产生中间文档、修改记录、评价结果、错误信息和新的任务请求。Manage 需要对这些内容进行版本化和结构化管理。</p>
+<p>它主要承担三类职责：</p>
+<p><strong>第一，管理上下文。</strong> 不同角色不应该拿到完全相同的上下文，而应该根据任务需要获取相关信息。例如，Judge 需要看到生成结果和评价标准，但不一定需要看到所有历史对话。</p>
+<p><strong>第二，管理工作树。</strong> 每一次生成、修改、回退、分支尝试，都可以形成一个可追踪的工作树。这样可以避免 Agent 在多轮循环中丢失状态，也方便人类在必要时回溯。</p>
+<p><strong>第三，响应角色请求。</strong> 某些角色在运行过程中可能会请求超出权限的操作，例如执行命令、访问文件、调用外部工具。Manage 需要根据当前状态、角色任务和优先级，自主判断是否响应，以及如何响应。</p>
+<p>因此，Manage 部分的核心能力是：</p>
+<p><strong>让 Loop 的运行过程可追踪、可恢复、可审查、可分支。</strong></p>
+<h2>七、Build 部分：从用户需求自动构建 Loop</h2>
+<p>Build 部分负责把用户需求转化为可运行的 Loop。</p>
+<p>它会通过 Redis 数据库整合已有的 Skill、MCP 和 Tool 资源，并对用户需求进行拆解和重写。随后，它会建立角色，分发任务，并根据已有管线搭建 Loop 流程。</p>
+<p>Build 部分可以理解为 EasyLoop 的项目生成器。</p>
+<p>用户不一定需要手动设计完整的角色图，而是可以提出一个目标，例如：帮我搭建一个购物比价 Loop。</p>
+<p>Build 部分需要进一步拆解这个需求：需要哪些角色？哪些工具？哪些评价标准？哪些步骤可以自动化？哪些环节需要权限确认？哪些地方可能失败？失败后如何重试？</p>
+<p>除了生成流程，Build 还需要进行流程可行性控制、错误捕获和自动修改。</p>
+<p>例如，如果某个 MCP 工具不可用，Build 需要判断能否替换工具；如果某个角色输出格式不稳定，Build 需要修改角色约束；如果 Loop 无法收敛，Build 需要调整 judge 标准或引入人工确认节点。</p>
+<p>因此，Build 部分的核心能力是：</p>
+<p><strong>把自然语言目标转化为可运行、可维护、可修正的 Loop 工程。</strong></p>
+<h2>八、技术栈设想</h2>
+<p>目前 EasyLoop 的初步技术栈设想如下：</p>
+<ul>
+<li><strong>LangGraph</strong>：用于构建有向有环图，管理角色节点和状态转移</li>
+<li><strong>Milvus</strong>：用于单个 Loop 的长期上下文管理和语义检索</li>
+<li><strong>Redis</strong>：用于短期上下文、任务状态、工具资源和运行缓存</li>
+<li><strong>SQLite</strong>：用于结构化状态记录和轻量级元数据管理</li>
+<li><strong>Git</strong>：用于版本管理、工作树管理和回滚</li>
+<li><strong>Docker</strong>：用于隔离不同 Loop 的运行环境，保证工具调用和代码执行的安全性</li>
+</ul>
+<h2>九、EasyLoop 的核心价值</h2>
+<p>EasyLoop 想解决的不是如何让 Agent 更聪明，而是如何让 Agent 的迭代过程更工程化。</p>
+<p>传统 Agent 项目往往关注单次生成能力，而 Loop Engineering 更关注<strong>持续优化能力</strong>。</p>
+<p>在我看来，未来很多 Agent 项目的关键不在于某一次回答是否足够好，而在于它能否围绕一个目标持续行动、持续评价、持续修正，并在这个过程中管理好上下文、状态、权限和失败恢复。</p>
+<p>EasyLoop 的核心价值可以总结为三点：</p>
+<p><strong>第一，降低人的 review 成本。</strong> 通过规则验收和 Agent as Judge，把人从频繁审查中解放出来。</p>
+<p><strong>第二，把 Agent 工作流变成可管理的工程对象。</strong> 通过角色图、工作树、上下文管理和版本控制，让 Loop 不再是黑盒运行。</p>
+<p><strong>第三，提高 Agent 项目的搭建效率。</strong> 通过 Build 部分自动拆解需求、组织角色、绑定工具，让用户可以更快构建特定场景下的 Loop。</p>
+<h2>十、总结</h2>
+<p>Loop 不应该只被理解为长程 Agent 项目的专属能力。</p>
+<p>只要一个任务存在生成—评价—修正的结构，并且评价过程能够被规则、代码、指标或 Agent Judge 低成本替代，它就具备 Loop 化的潜力。</p>
+<p>EasyLoop 正是基于这个判断提出的一个原型框架。</p>
+<p>它希望把不同场景下的 Agent Loop 抽象成统一的工程结构：由 Loop 定义角色和流程，由 Manage 管理状态和上下文，由 Build 根据用户需求自动构建和修正流程。</p>
+<p>从这个角度看，Agent 的未来可能不只是更会回答问题，而是更会围绕目标持续迭代。</p>
+<p>而 EasyLoop 想做的，就是为这种持续迭代提供一个更自然、更可控、更工程化的起点。</p>
+</div><div class="back"><a href="/blog/">← BACK TO NOTES</a></div></div><script>(function(){var c=document.getElementById('grid'),ctx=c.getContext('2d'),w,h,size=40,timer=0;
+function R(){w=c.width=window.innerWidth;h=c.height=window.innerHeight;}
+R();window.addEventListener('resize',R);
+function D(){ctx.clearRect(0,0,w,h);ctx.strokeStyle='rgba(255,255,255,0.04)';ctx.lineWidth=0.5;
+for(var x=0;x<=w;x+=size)for(var y=0;y<=h;y+=size)ctx.strokeRect(x,y,1,1);
+ctx.fillStyle='rgba(255,255,255,0.12)';var C=Math.floor(w/size),R=Math.floor(h/size);
+for(var i=0;i<15;i++){var cx=Math.floor((Math.sin(timer*0.7+i*2.1)*0.5+0.5)*C)*size;
+var cy=Math.floor((Math.cos(timer*0.5+i*1.7)*0.5+0.5)*R)*size;ctx.fillRect(cx,cy,size,size);}
+timer+=0.008;requestAnimationFrame(D);}D();})();</script></body></html>

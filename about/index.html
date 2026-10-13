@@ -1,0 +1,166 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width,initial-scale=1,maximum-scale=2">
+<meta http-equiv="X-UA-Compatible" content="IE=edge,chrome=1">
+<meta name="theme-color" content="#060606">
+<title>About · AI Researcher</title>
+<link rel="icon" href="../favicon.ico">
+<style>
+  :root {
+    --bg: #060606;
+    --surface: #0e0e12;
+    --text: #b6b6b6;
+    --text-dim: #4a4a50;
+    --accent: #5f8de0;
+    --border: #1a1a20;
+  }
+  * { box-sizing: border-box; margin: 0; padding: 0; }
+  html { font-size: 20px; }
+  body {
+    background: var(--bg);
+    color: var(--text);
+    font-family: "Helvetica Neue","Microsoft Yahei",-apple-system,sans-serif;
+    min-height: 100vh;
+    -webkit-font-smoothing: antialiased;
+    line-height: 1.7;
+  }
+  canvas#grid { position: fixed; top: 0; left: 0; width: 100%; height: 100%; z-index: 0; pointer-events: none; opacity: 0.5; }
+
+  .container { position: relative; z-index: 1; max-width: 600px; margin: 0 auto; padding: 10vh 30px 80px; }
+
+  .header { text-align: center; margin-bottom: 70px; }
+  .header h1 { font-size: 2.4rem; font-weight: 200; color: #f0f0f0; letter-spacing: 4px; margin-bottom: 10px; }
+  .header .sub { font-size: 0.8rem; color: var(--text-dim); letter-spacing: 2px; font-weight: 300; }
+
+  .section { margin-bottom: 48px; }
+  .section h2 {
+    font-size: 0.75rem; font-weight: 400; color: var(--accent);
+    letter-spacing: 3px; text-transform: uppercase;
+    margin-bottom: 18px; padding-bottom: 10px;
+    border-bottom: 1px solid var(--border);
+  }
+  .section p, .section li { font-size: 0.8rem; color: #6a6a72; font-weight: 300; }
+  .section ul { list-style: none; padding: 0; }
+  .section li { margin-bottom: 10px; padding-left: 16px; position: relative; }
+  .section li::before { content: '—'; position: absolute; left: 0; color: #2a2a30; }
+
+  .tag-group { display: flex; flex-wrap: wrap; gap: 10px; }
+  .tag {
+    padding: 4px 14px; border: 1px solid var(--border);
+    border-radius: 16px; font-size: 0.7rem; color: var(--text-dim);
+    letter-spacing: 1px; transition: all 0.3s;
+  }
+  .tag:hover { border-color: var(--accent); color: var(--accent); }
+
+  .contact { text-align: center; margin-top: 60px; }
+  .contact a {
+    color: #444; font-size: 0.75rem; letter-spacing: 2px;
+    margin: 0 16px; transition: color 0.4s;
+  }
+  .contact a:hover { color: var(--accent); }
+
+  .back { text-align: center; margin-top: 40px; }
+  .back a { color: #2a2a2a; font-size: 0.65rem; letter-spacing: 2px; transition: color 0.4s; }
+  .back a:hover { color: #555; }
+
+  @media (max-width: 768px) {
+    .container { padding: 6vh 20px 60px; }
+    .header h1 { font-size: 1.8rem; }
+  }
+</style>
+</head>
+<body>
+
+<canvas id="grid"></canvas>
+
+<div class="container">
+  <div class="header">
+    <h1>About</h1>
+    <p class="sub">RESEARCH & PRACTICE</p>
+  </div>
+
+  <div class="section">
+    <h2>Research</h2>
+    <ul>
+      <li>开放词汇感知 — OVD / OVSS / 组合视觉 grounding</li>
+      <li>多模态大模型 — MLLM 推理增强 / 视觉 Agent / VLA</li>
+      <li>检索增强生成 — Agentic RAG 架构 / 多模态检索 / 知识库</li>
+      <li>模型安全与对齐 — 幻觉检测 / 偏好对齐 / 对抗鲁棒性</li>
+      <li>高效架构 — Token 压缩 / 即插即用模块 / 训练免方法</li>
+    </ul>
+  </div>
+
+  <div class="section">
+    <h2>Stack</h2>
+    <div class="tag-group">
+      <span class="tag">PyTorch</span>
+      <span class="tag">Ultralytics YOLO</span>
+      <span class="tag">HuggingFace</span>
+      <span class="tag">CLIP</span>
+      <span class="tag">SAM2</span>
+      <span class="tag">LLaVA</span>
+      <span class="tag">LangChain</span>
+      <span class="tag">vLLM</span>
+      <span class="tag">OpenCLaw</span>
+    </div>
+  </div>
+
+  <div class="section">
+    <h2>Recent</h2>
+    <ul>
+      <li>SDP-YOLO — 语义分解投影器，0.5M 参数组合式 OVD</li>
+      <li>SegLLM 数据集 — 开放词汇分割对话 → COCO 格式</li>
+      <li>OV & MLLM 论文调研 — 2025 五大顶会 1000+ 篇系统性分析</li>
+      <li>AltSendme — P2P 跨平台文件传输部署</li>
+    </ul>
+  </div>
+
+  <div class="contact">
+    <a href="mailto:simon@tomotoes.com">EMAIL</a>
+    <a href="https://github.com/auince">GITHUB</a>
+  </div>
+
+  <div class="back">
+    <a href="../">← HOME</a>
+  </div>
+</div>
+
+<script>
+(function() {
+  var c = document.getElementById('grid');
+  var ctx = c.getContext('2d');
+  var w, h, size = 40, timer = 0;
+
+  function resize() {
+    w = c.width = window.innerWidth;
+    h = c.height = window.innerHeight;
+  }
+  resize();
+  window.addEventListener('resize', resize);
+
+  function draw() {
+    ctx.clearRect(0, 0, w, h);
+    ctx.strokeStyle = 'rgba(255,255,255,0.04)';
+    ctx.lineWidth = 0.5;
+    for (var x = 0; x <= w; x += size)
+      for (var y = 0; y <= h; y += size)
+        ctx.strokeRect(x, y, 1, 1);
+
+    ctx.fillStyle = 'rgba(255,255,255,0.12)';
+    var cols = Math.floor(w / size), rows = Math.floor(h / size);
+    for (var i = 0; i < 15; i++) {
+      var cx = Math.floor((Math.sin(timer * 0.7 + i * 2.1) * 0.5 + 0.5) * cols) * size;
+      var cy = Math.floor((Math.cos(timer * 0.5 + i * 1.7) * 0.5 + 0.5) * rows) * size;
+      ctx.fillRect(cx, cy, size, size);
+    }
+    timer += 0.008;
+    requestAnimationFrame(draw);
+  }
+  draw();
+})();
+</script>
+
+</body>
+</html>
