@@ -1,166 +1,64 @@
-<!DOCTYPE html>
+<!doctype html>
 <html lang="zh-CN">
 <head>
-<meta charset="utf-8">
-<meta name="viewport" content="width=device-width,initial-scale=1,maximum-scale=2">
-<meta http-equiv="X-UA-Compatible" content="IE=edge,chrome=1">
-<meta name="theme-color" content="#060606">
-<title>About · AI Researcher</title>
-<link rel="icon" href="../favicon.ico">
-<style>
-  :root {
-    --bg: #060606;
-    --surface: #0e0e12;
-    --text: #b6b6b6;
-    --text-dim: #4a4a50;
-    --accent: #5f8de0;
-    --border: #1a1a20;
-  }
-  * { box-sizing: border-box; margin: 0; padding: 0; }
-  html { font-size: 20px; }
-  body {
-    background: var(--bg);
-    color: var(--text);
-    font-family: "Helvetica Neue","Microsoft Yahei",-apple-system,sans-serif;
-    min-height: 100vh;
-    -webkit-font-smoothing: antialiased;
-    line-height: 1.7;
-  }
-  canvas#grid { position: fixed; top: 0; left: 0; width: 100%; height: 100%; z-index: 0; pointer-events: none; opacity: 0.5; }
-
-  .container { position: relative; z-index: 1; max-width: 600px; margin: 0 auto; padding: 10vh 30px 80px; }
-
-  .header { text-align: center; margin-bottom: 70px; }
-  .header h1 { font-size: 2.4rem; font-weight: 200; color: #f0f0f0; letter-spacing: 4px; margin-bottom: 10px; }
-  .header .sub { font-size: 0.8rem; color: var(--text-dim); letter-spacing: 2px; font-weight: 300; }
-
-  .section { margin-bottom: 48px; }
-  .section h2 {
-    font-size: 0.75rem; font-weight: 400; color: var(--accent);
-    letter-spacing: 3px; text-transform: uppercase;
-    margin-bottom: 18px; padding-bottom: 10px;
-    border-bottom: 1px solid var(--border);
-  }
-  .section p, .section li { font-size: 0.8rem; color: #6a6a72; font-weight: 300; }
-  .section ul { list-style: none; padding: 0; }
-  .section li { margin-bottom: 10px; padding-left: 16px; position: relative; }
-  .section li::before { content: '—'; position: absolute; left: 0; color: #2a2a30; }
-
-  .tag-group { display: flex; flex-wrap: wrap; gap: 10px; }
-  .tag {
-    padding: 4px 14px; border: 1px solid var(--border);
-    border-radius: 16px; font-size: 0.7rem; color: var(--text-dim);
-    letter-spacing: 1px; transition: all 0.3s;
-  }
-  .tag:hover { border-color: var(--accent); color: var(--accent); }
-
-  .contact { text-align: center; margin-top: 60px; }
-  .contact a {
-    color: #444; font-size: 0.75rem; letter-spacing: 2px;
-    margin: 0 16px; transition: color 0.4s;
-  }
-  .contact a:hover { color: var(--accent); }
-
-  .back { text-align: center; margin-top: 40px; }
-  .back a { color: #2a2a2a; font-size: 0.65rem; letter-spacing: 2px; transition: color 0.4s; }
-  .back a:hover { color: #555; }
-
-  @media (max-width: 768px) {
-    .container { padding: 6vh 20px 60px; }
-    .header h1 { font-size: 1.8rem; }
-  }
-</style>
+<meta charset="utf-8"><meta name="viewport" content="width=device-width, initial-scale=1">
+<meta name="theme-color" content="#08090c">
+<meta name="description" content="李成昊（Auince），电子科技大学信息与通信工程硕士在读。多模态大模型、图像质量评价与 Agent 系统的研究和实践。">
+<title>About · 李成昊 / Auince</title>
+<link rel="canonical" href="https://auince.github.io/about/">
+<link rel="icon" href="/favicon.ico"><link rel="stylesheet" href="/css/about.css">
 </head>
-<body>
+<body><div class="page">
+<nav class="nav" aria-label="网站导航"><a class="brand" href="/">Auince <span>/</span></a><div><a href="/blog/">Notes</a><a href="/project/">Projects</a><a href="/about/" aria-current="page">About</a></div></nav>
+<main>
+<header class="hero">
+<p class="eyebrow">ABOUT / RESEARCH &amp; PRACTICE</p>
+<h1>李成昊 <span>Auince</span></h1>
+<p class="intro">电子科技大学 · 信息与通信工程 · 硕士在读</p>
+<div class="tags" aria-label="研究与实践方向"><span>多模态大模型</span><span>图像质量评价</span><span>Agent 系统</span></div>
+<div class="actions"><a class="download" href="/assets/resume/li-chenghao-resume.pdf" download="李成昊-简历.pdf" type="application/pdf"><svg viewBox="0 0 24 24" aria-hidden="true"><path d="M12 3v12m-4-4 4 4 4-4M5 16v5h14v-5"/></svg>下载简历 <span>PDF · 2 页</span></a><a class="text-link" href="mailto:auince@qq.com">auince@qq.com ↗</a><a class="text-link" href="https://github.com/auince" target="_blank" rel="noopener noreferrer">GitHub ↗</a></div>
+</header>
 
-<canvas id="grid"></canvas>
+<section class="section" aria-labelledby="education"><div class="section-label"><span>01</span><h2 id="education">教育背景</h2></div><div class="section-body education">
+<div class="education-row"><div><h3>电子科技大学</h3><p>硕士 · 信息与通信工程 <span class="muted">/ 推免</span></p></div><time>2025 — 2028</time></div>
+<div class="education-row"><div><h3>电子科技大学</h3><p>学士 · 空间信息数字技术</p><p class="detail">GPA 3.94 / 4 · 专业排名 5 / 81</p></div><time>2021 — 2025</time></div>
+</div></section>
 
-<div class="container">
-  <div class="header">
-    <h1>About</h1>
-    <p class="sub">RESEARCH & PRACTICE</p>
-  </div>
+<section class="section" aria-labelledby="research"><div class="section-label"><span>02</span><h2 id="research">科研经历</h2></div><div class="section-body">
+<article class="experience"><div class="entry-meta"><span>第一作者 <span class="status">ICLR 在投</span></span><time>2026.06 — 2026.09</time></div><h3>面向开放维度的图像质量评价模型</h3>
+<p>针对 IQA 模型泛化不足、VLM 模型打分不连续的问题，设计 AI Debate 工作流，构建 65k 多维度图像质量分数评价数据，微调 Qwen3-VL-8B-Instruct，使模型能够按自然语言定义的维度进行连续评分。</p>
+<ul><li>设计“分数—证据链”数据合成流程，通过多智能体独立分析、证据质疑与观点修正，生成 0–100 分数及可解释证据链文本。</li><li>搭建基于 Token-as-Score 的评价框架，挖掘语义化评分 token，设计 Caption–Score 两阶段微调路径。</li></ul>
+<div class="research-metrics"><div><strong>65k</strong><span>多维度评分数据</span></div><div><strong>0–100</strong><span>开放维度连续评分</span></div><div><strong>Qwen3-VL</strong><span>8B-Instruct · LoRA</span></div></div>
+</article></div></section>
 
-  <div class="section">
-    <h2>Research</h2>
-    <ul>
-      <li>开放词汇感知 — OVD / OVSS / 组合视觉 grounding</li>
-      <li>多模态大模型 — MLLM 推理增强 / 视觉 Agent / VLA</li>
-      <li>检索增强生成 — Agentic RAG 架构 / 多模态检索 / 知识库</li>
-      <li>模型安全与对齐 — 幻觉检测 / 偏好对齐 / 对抗鲁棒性</li>
-      <li>高效架构 — Token 压缩 / 即插即用模块 / 训练免方法</li>
-    </ul>
-  </div>
+<section class="section" aria-labelledby="projects"><div class="section-label"><span>03</span><h2 id="projects">项目经历</h2></div><div class="section-body">
+<article class="experience"><div class="entry-meta"><span>主研成员 · 校企合作</span><time>2026.03 — 2026.07</time></div><h3>四川省消防总队智慧消防系统</h3>
+<p>面向巡检样本稀缺、细粒度隐患识别困难与法规依据匹配复杂的问题，开发消防垂直领域大小模型群，用于火场态势感知与消防隐患识别。</p>
+<ul><li><strong>数据与标注：</strong>收集 1,196 组实采巡检样本，结合开源图像与局部缺陷仿真，搭建“人工提示 + 模型生成”“模型预标注 + 人工复审”的协同流程。</li><li><strong>法规 RAG：</strong>整合 70 余份法规、标准与案例，构建标题—正文双向索引，融合 BM25、稠密检索、RRF 排序与 Agent 查询改写。</li><li><strong>模型后训练：</strong>基于 Qwen3.5-9B 进行 LoRA 监督微调，设计格式、隐患标签和最终结论奖励，在 SFT 基础上引入 GRPO。</li></ul>
+<div class="result"><span class="result-label">项目结果</span><p>327 张测试图像上的合规判定准确率：<strong>53.12% → 81.25%（SFT）→ 90.63%（RLVR）</strong>。法规检索 Top1 命中率从 61.51% 提升至 74.21%，Top5 准确率从 78.17% 提升至 92.06%。</p></div></article>
+<article class="experience"><div class="entry-meta"><span>主研成员 · 联合华西医学院</span><time>2025.10 — 2026.07</time></div><h3>口腔临床诊断辅助评估系统</h3>
+<p>在真实病患数据上构建口腔临床诊断辅助评估 Agent 系统，支持根管炎症、牙隐裂等多种病症的病症提取、风险评估及治疗难度评估。</p>
+<ul><li><strong>Skills–Agent 两层架构：</strong>将病历图文解析、信息审校、问题标记、知识检索封装为四个 Skills，由 LeaderAgent 与多个病症专业 Agent 按任务调用。</li><li><strong>协同调度：</strong>LeaderAgent 拆解任务并路由至对应 Agent，进行病历二次校对，通过共享上下文同步状态并统筹回答。</li><li><strong>领域后训练：</strong>基于口腔医学书籍和 1,954 条真实病历构建分析及评估数据，使用 Qwen3-VL-8B-Instruct 进行继续预训练、LoRA 监督微调与 GRPO 优化。</li></ul>
+<div class="result"><span class="result-label">项目结果</span><p>病症提取准确率从 55.10% 提升至 <strong>92.03%</strong>，风险评估准确率从 39.68% 提升至 <strong>89.30%</strong>。双卡 4090 环境下，单 Agent 响应 15–40 秒，单次回答 80–120 秒。</p></div></article>
+</div></section>
 
-  <div class="section">
-    <h2>Stack</h2>
-    <div class="tag-group">
-      <span class="tag">PyTorch</span>
-      <span class="tag">Ultralytics YOLO</span>
-      <span class="tag">HuggingFace</span>
-      <span class="tag">CLIP</span>
-      <span class="tag">SAM2</span>
-      <span class="tag">LLaVA</span>
-      <span class="tag">LangChain</span>
-      <span class="tag">vLLM</span>
-      <span class="tag">OpenCLaw</span>
-    </div>
-  </div>
+<section class="section" aria-labelledby="publications"><div class="section-label"><span>04</span><h2 id="publications">论文与专利</h2></div><div class="section-body">
+<div class="publication"><span class="small-label">IGARSS 2023</span><h3 lang="en">Outdoor Simultaneous Localization And Mapping By Using Millimeter Wave Radar</h3></div>
+<div class="publication"><span class="small-label">发明专利 · 2023</span><h3>基于毫米波雷达数据的同步定位与建图方法及系统</h3><p class="detail">学生第一发明人</p></div>
+</div></section>
 
-  <div class="section">
-    <h2>Recent</h2>
-    <ul>
-      <li>SDP-YOLO — 语义分解投影器，0.5M 参数组合式 OVD</li>
-      <li>SegLLM 数据集 — 开放词汇分割对话 → COCO 格式</li>
-      <li>OV & MLLM 论文调研 — 2025 五大顶会 1000+ 篇系统性分析</li>
-      <li>AltSendme — P2P 跨平台文件传输部署</li>
-    </ul>
-  </div>
+<section class="section" aria-labelledby="honors"><div class="section-label"><span>05</span><h2 id="honors">荣誉与竞赛</h2></div><div class="section-body"><ul class="honors">
+<li><span>国家奖学金</span><time>2023</time></li><li><span>国家励志奖学金</span><time>2022、2024</time></li>
+<li><span>研究生电子设计大赛 · 红外开放世界全模态分割赛题<br><strong>西南赛区二等奖</strong></span><time>2026</time></li>
+<li><span>第十一届“大唐杯”全国大学生移动通信 5G 技术大赛<br><strong>省级三等奖</strong></span><time>2024</time></li>
+<li><span>电子科技大学优秀毕业生 · 荣誉学位</span><time>2025</time></li><li><span>优秀学生奖学金</span><time>2022 — 2025</time></li>
+</ul></div></section>
 
-  <div class="contact">
-    <a href="mailto:simon@tomotoes.com">EMAIL</a>
-    <a href="https://github.com/auince">GITHUB</a>
-  </div>
-
-  <div class="back">
-    <a href="../">← HOME</a>
-  </div>
-</div>
-
-<script>
-(function() {
-  var c = document.getElementById('grid');
-  var ctx = c.getContext('2d');
-  var w, h, size = 40, timer = 0;
-
-  function resize() {
-    w = c.width = window.innerWidth;
-    h = c.height = window.innerHeight;
-  }
-  resize();
-  window.addEventListener('resize', resize);
-
-  function draw() {
-    ctx.clearRect(0, 0, w, h);
-    ctx.strokeStyle = 'rgba(255,255,255,0.04)';
-    ctx.lineWidth = 0.5;
-    for (var x = 0; x <= w; x += size)
-      for (var y = 0; y <= h; y += size)
-        ctx.strokeRect(x, y, 1, 1);
-
-    ctx.fillStyle = 'rgba(255,255,255,0.12)';
-    var cols = Math.floor(w / size), rows = Math.floor(h / size);
-    for (var i = 0; i < 15; i++) {
-      var cx = Math.floor((Math.sin(timer * 0.7 + i * 2.1) * 0.5 + 0.5) * cols) * size;
-      var cy = Math.floor((Math.cos(timer * 0.5 + i * 1.7) * 0.5 + 0.5) * rows) * size;
-      ctx.fillRect(cx, cy, size, size);
-    }
-    timer += 0.008;
-    requestAnimationFrame(draw);
-  }
-  draw();
-})();
-</script>
-
-</body>
-</html>
+<section class="section" aria-labelledby="skills"><div class="section-label"><span>06</span><h2 id="skills">专业技能</h2></div><div class="section-body skill-list">
+<div><h3>开发与部署</h3><p>Python · Linux · Docker · Conda · 离线环境配置与服务部署</p></div>
+<div><h3>计算机视觉</h3><p>目标检测与分类 · 开放词汇语义分割 · YOLO · SAM · DINO</p></div>
+<div><h3>多模态模型训练</h3><p>Qwen-VL · LoRA · SFT · GRPO · vLLM · ms-swift · TRL</p></div>
+<div><h3>英语</h3><p>CET-4：590 · CET-6：531</p></div>
+</div></section>
+</main><footer><a href="/">← 返回首页</a><a href="/assets/resume/li-chenghao-resume.pdf" download="李成昊-简历.pdf">下载完整简历 ↧</a></footer>
+</div></body></html>
