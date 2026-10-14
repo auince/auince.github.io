@@ -40,6 +40,10 @@
 <p>在真实病患数据上构建口腔临床诊断辅助评估 Agent 系统，支持根管炎症、牙隐裂等多种病症的病症提取、风险评估及治疗难度评估。</p>
 <ul><li><strong>Skills–Agent 两层架构：</strong>将病历图文解析、信息审校、问题标记、知识检索封装为四个 Skills，由 LeaderAgent 与多个病症专业 Agent 按任务调用。</li><li><strong>协同调度：</strong>LeaderAgent 拆解任务并路由至对应 Agent，进行病历二次校对，通过共享上下文同步状态并统筹回答。</li><li><strong>领域后训练：</strong>基于口腔医学书籍和 1,954 条真实病历构建分析及评估数据，使用 Qwen3-VL-8B-Instruct 进行继续预训练、LoRA 监督微调与 GRPO 优化。</li></ul>
 <div class="result"><span class="result-label">项目结果</span><p>病症提取准确率从 55.10% 提升至 <strong>92.03%</strong>，风险评估准确率从 39.68% 提升至 <strong>89.30%</strong>。双卡 4090 环境下，单 Agent 响应 15–40 秒，单次回答 80–120 秒。</p></div></article>
+<article class="experience" id="canvas-studio"><div class="entry-meta"><span>个人项目 · 图像生成工具</span></div><h3>Canvas Studio — ComfyUI 创作工作台</h3>
+<p>把提示词、参考图、模型与 LoRA 配置收进清晰界面，自动编排 ComfyUI 工作流并批量生成。</p>
+<ul><li><strong>自动工作流编排：</strong>根据界面里的模型、提示词、参考图和生成参数自动组装 ComfyUI 工作流，不用手工连线。</li><li><strong>灵活控制与配置：</strong>在界面选模型、LoRA 及强度，调整生成参数，工作流模板页方便浏览部署侧提供的预设。</li><li><strong>批量生成与结果管理：</strong>Random Studio 支持批量随机种子队列、逐张进度显示；Canvas 用浏览器存储，Random 提供服务端加密图库。</li></ul>
+</article>
 </div></section>
 
 <section class="section" aria-labelledby="publications"><div class="section-label"><span>04</span><h2 id="publications">论文与专利</h2></div><div class="section-body">
